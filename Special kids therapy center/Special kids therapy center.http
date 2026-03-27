@@ -1,0 +1,6 @@
+@Special_kids_therapy_center_HostAddress = http://localhost:5022
+
+GET {{Special_kids_therapy_center_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
