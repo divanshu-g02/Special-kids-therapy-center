@@ -39,12 +39,12 @@ namespace Special_kids_therapy_center.Models
         [MaxLength(20)]
         public string? PhoneNo { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public bool IsActive { get; set; } = null;
+        public bool IsActive { get; set; } = true;
 
 
 
         public Doctor? Doctor { get; set; }
-        public ICollection<Patient> GuardianPatients { get; set; } = [];
+        public ICollection<Patient> Patients { get; set; } = [];
         public ICollection<Appointment> ReceptionistAppointments { get; set; } = [];
     }
 

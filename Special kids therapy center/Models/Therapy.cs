@@ -16,7 +16,6 @@ namespace Special_kids_therapy_center.Models
         [Required]
         public int DurationMinutes { get; set; }
 
-        [Required]
         public decimal Cost { get; set; }
 
         public ICollection<Appointment> Appointments { get; set; } = [];
