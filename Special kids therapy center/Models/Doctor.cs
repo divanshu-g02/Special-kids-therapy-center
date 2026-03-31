@@ -3,11 +3,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Special_kids_therapy_center.Models
 {
-    public class Doctors
+    public class Doctor
     {
         [Key]
         public int DoctorId { get; set; }
 
+        [Required]
         public User UserId { get; set; }
 
 
@@ -24,7 +25,9 @@ namespace Special_kids_therapy_center.Models
 
 
 
-        [ForeignKey("UserId")]
-        public User User { get; set; }
+        [ForeignKey(nameof(UserId))]
+        public User User { get; set; } = null;
+        public ICollection<Slot> Slots { get; set; } = [];
+        public ICollection<Appointment> Appointments = [];
     }
 }

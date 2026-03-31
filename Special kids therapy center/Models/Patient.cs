@@ -9,21 +9,21 @@ namespace Special_kids_therapy_center.Models
         Female,
         Others
     }
-    public class Patients
+    public class Patient
     {
         [Key]
         public int PatientId { get; set; }
 
-        [ForeignKey("Guardian")]
         public int GuardianId { get; set; }
+        
 
         [Required]
         [MaxLength(50)]
-        public string FirstName { get; set; }
+        public string FirstName { get; set; } = string.Empty;
 
         [Required]
         [MaxLength(50)]
-        public string LastName { get; set; }
+        public string LastName { get; set; } = string.Empty;
         public DateOnly DateOfBirth { get; set; }
 
         public Gender Gender { get; set; }
@@ -32,6 +32,8 @@ namespace Special_kids_therapy_center.Models
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
-        public User Guardian { get; set; }
+        [ForeignKey(nameof(GuardianId))]
+        public User? Guardian { get; set; }
+        public ICollection<Appointment> Appointments { get; set; } = [];
     }
 }

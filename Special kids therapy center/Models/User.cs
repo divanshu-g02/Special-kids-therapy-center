@@ -31,7 +31,7 @@ namespace Special_kids_therapy_center.Models
 
         [Required]
         [MaxLength(255)]
-        public string PasswordHash { get; set; }
+        public string PasswordHash { get; set; } = string.Empty;
 
         [Required]
         public Roles Role { get; set; }
@@ -39,12 +39,13 @@ namespace Special_kids_therapy_center.Models
         [MaxLength(20)]
         public string? PhoneNo { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public bool IsActive { get; set; } = true;
+        public bool IsActive { get; set; } = null;
 
 
 
-        public ICollection<Patients> Patients { get; set; }
-        public Doctors Doctor { get; set; }
+        public Doctor? Doctor { get; set; }
+        public ICollection<Patient> GuardianPatients { get; set; } = [];
+        public ICollection<Appointment> ReceptionistAppointments { get; set; } = [];
     }
 
     
