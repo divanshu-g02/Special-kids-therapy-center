@@ -1,4 +1,6 @@
 
+using Special_kids_therapy_center.Middleware;
+
 namespace Special_kids_therapy_center
 {
     public class Program
@@ -20,6 +22,8 @@ namespace Special_kids_therapy_center
             {
                 app.MapOpenApi();
             }
+
+            app.UseMiddleware<ExceptionMiddleware>();
 
             app.UseHttpsRedirection();
 

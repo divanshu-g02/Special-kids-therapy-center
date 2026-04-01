@@ -15,8 +15,5 @@ namespace Special_kids_therapy_center.Repository.Interface
         Task<User> CreateAsync(User user);
         Task<User> UpdateAsync(User user);
         Task<bool> DeleteAsync(int id);
-
-
-
     }
 }

@@ -14,11 +14,11 @@ namespace Special_kids_therapy_center.Repository.Implementation
             _context = context;
         }
 
-        //public async Task<User?> GetByIdAsync(int id)
-        //{
-        //    return await _context.Users.FirstOrDefaultAsync(u => u.UserId == id);
-        //}
-   
+        public async Task<User?> GetByIdAsync(int id)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.UserId == id);
+        }
+
         //public async Task<User?> GetByEmailAsync(string email)
         //{
         //    return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
@@ -48,13 +48,13 @@ namespace Special_kids_therapy_center.Repository.Implementation
         public async Task<User> UpdateAsync(User user)
         {
             _context.Users.Update(user);
-          await   _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
             return user;
         }
 
         public async Task<bool> DeleteAsync(int id)
         {
-            var user = await _context.Users.FirstAsync(x=>x.UserId==id);
+            var user = await _context.Users.FirstAsync(x => x.UserId ==  id);
             if (user == null) return false;
 
              _context.Users.Remove(user);

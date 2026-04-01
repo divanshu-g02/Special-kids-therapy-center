@@ -5,7 +5,7 @@ namespace Special_kids_therapy_center.DTOs.Patient
 {
     public class PatientUpdateDto
     {
-        public int? GuardianId { get; set; }        
+        public int GuardianId { get; set; }        
         [MaxLength(50)]
         public string? FirstName { get; set; }
 

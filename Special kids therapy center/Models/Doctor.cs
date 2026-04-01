@@ -9,7 +9,7 @@ namespace Special_kids_therapy_center.Models
         public int DoctorId { get; set; }
 
         [Required]
-        public User UserId { get; set; }
+        public int UserId { get; set; }
 
 
         [MaxLength(100)]
