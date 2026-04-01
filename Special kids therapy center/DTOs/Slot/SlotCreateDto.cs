@@ -10,7 +10,6 @@ namespace Special_kids_therapy_center.DTOs.Slot
 
         public TimeOnly StartTime { get; set; }
 
-
         public TimeOnly EndTime { get; set; }
     }
 }
