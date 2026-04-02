@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Special_kids_therapy_center.Models;
 
-namespace Special_kids_therapy_center.Data.Configrations
+namespace Special_kids_therapy_center.Data.Configurations
 {
     public class UserConfiguration : IEntityTypeConfiguration<User>
     {
@@ -20,7 +20,7 @@ namespace Special_kids_therapy_center.Data.Configrations
 
             entity.Property(u => u.Email)
                 .IsRequired()
-                .HasMaxLength(255);
+                .HasMaxLength(100);
 
             entity.HasIndex(u => u.Email)
                 .IsUnique();
@@ -29,12 +29,17 @@ namespace Special_kids_therapy_center.Data.Configrations
                 .IsRequired()
                 .HasMaxLength(255);
 
-            entity.Property(u => u.PhoneNo)
-                .HasMaxLength(20);
-
             entity.Property(u => u.Role)
                 .IsRequired()
                 .HasConversion<string>();
+
+            entity.Property(u => u.PhoneNo)
+                .HasMaxLength(20);
+
+
+
+            entity.Property(u => u.IsActive)
+                .HasDefaultValue(true);
         }
     }
 }

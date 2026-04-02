@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Special_kids_therapy_center.Data.Configrations;
+using Special_kids_therapy_center.Data.Configurations;
 using Special_kids_therapy_center.Models;
 
 namespace Special_kids_therapy_center.Data

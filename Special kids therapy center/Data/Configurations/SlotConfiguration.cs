@@ -11,22 +11,21 @@ namespace Special_kids_therapy_center.Data.Configurations
             entity.HasKey(s => s.SlotId);
 
             entity.Property(s => s.Date)
-                  .IsRequired();
+                .IsRequired();
 
             entity.Property(s => s.StartTime)
-                  .IsRequired();
+                .IsRequired();
 
             entity.Property(s => s.EndTime)
-                  .IsRequired();
+                .IsRequired();
 
             entity.Property(s => s.IsBooked)
-                  .HasDefaultValue(false);
-
+                .HasDefaultValue(false);
 
             entity.HasOne(s => s.Doctor)
-                  .WithMany(d => d.Slots)
-                  .HasForeignKey(s => s.DoctorId)
-                  .OnDelete(DeleteBehavior.Cascade);
+                .WithMany(d => d.Slots)
+                .HasForeignKey(s => s.DoctorId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

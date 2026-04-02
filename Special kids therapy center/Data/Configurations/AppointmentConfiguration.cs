@@ -20,12 +20,12 @@ namespace Special_kids_therapy_center.Data.Configurations
                 .IsRequired();
 
             entity.Property(a => a.Status)
-                .HasConversion<String>()
+                .HasConversion<string>()
                 .HasDefaultValue(Status.Scheduled);
 
-            entity.Property(a => a.CreatedAt)
-                .HasDefaultValue("GETDATE()");
 
+
+            // ─── Relationships ────────────────────────────
             entity.HasOne(a => a.Patient)
                 .WithMany(p => p.Appointments)
                 .HasForeignKey(a => a.PatientId)
@@ -36,11 +36,22 @@ namespace Special_kids_therapy_center.Data.Configurations
                 .HasForeignKey(a => a.DoctorId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            entity.HasOne(a => a.Therapy)
+                .WithMany(t => t.Appointments)
+                .HasForeignKey(a => a.TherapyId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             entity.HasOne(a => a.Receptionist)
                 .WithMany(u => u.ReceptionistAppointments)
                 .HasForeignKey(a => a.ReceptionistId)
+                .IsRequired(false)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            entity.HasOne(a => a.Slot)
+                .WithOne(s => s.Appointment)
+                .HasForeignKey<Appointment>(a => a.SlotId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

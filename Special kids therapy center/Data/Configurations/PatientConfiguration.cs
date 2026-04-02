@@ -21,6 +21,7 @@ namespace Special_kids_therapy_center.Data.Configurations
             entity.Property(p => p.Gender)
                 .HasConversion<string>();
 
+
             entity.HasOne(p => p.Guardian)
                 .WithMany(u => u.Patients)
                 .HasForeignKey(p => p.GuardianId)

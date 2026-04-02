@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Special_kids_therapy_center.Models;
 
 namespace Special_kids_therapy_center.DTOs.Payment
 {

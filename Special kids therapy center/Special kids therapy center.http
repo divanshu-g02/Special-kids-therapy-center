@@ -1,6 +1,395 @@
-@Special_kids_therapy_center_HostAddress = http://localhost:5022
-
-GET {{Special_kids_therapy_center_HostAddress}}/weatherforecast/
-Accept: application/json
+@host = https://localhost:7288
+@token = 
 
 ###
+# ─── AUTH ────────────────────────────────────────────────────────
+
+### Register Admin
+POST {{host}}/api/auth/register
+Content-Type: application/json
+
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "admin@gmail.com",
+  "password": "Admin@12345",
+  "role": "Admin",
+  "phoneNo": "03001234567"
+}
+
+### Register Doctor
+POST {{host}}/api/auth/register
+Content-Type: application/json
+
+{
+  "firstName": "Sarah",
+  "lastName": "Khan",
+  "email": "doctor@gmail.com",
+  "password": "Doctor@12345",
+  "role": "Doctor",
+  "phoneNo": "03009876543"
+}
+
+### Register Receptionist
+POST {{host}}/api/auth/register
+Content-Type: application/json
+
+{
+  "firstName": "Ali",
+  "lastName": "Raza",
+  "email": "receptionist@gmail.com",
+  "password": "Recep@12345",
+  "role": "Receptionist",
+  "phoneNo": "03001112233"
+}
+
+### Register Guardian
+POST {{host}}/api/auth/register
+Content-Type: application/json
+
+{
+  "firstName": "Ahmed",
+  "lastName": "Hassan",
+  "email": "guardian@gmail.com",
+  "password": "Guard@12345",
+  "role": "Guardian",
+  "phoneNo": "03004445566"
+}
+
+### Login — copy token and paste in @token above
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@gmail.com",
+  "password": "Admin@12345"
+}
+
+###
+# ─── USER ────────────────────────────────────────────────────────
+
+### Get All Users
+GET {{host}}/api/user
+Authorization: Bearer {{token}}
+
+### Get User By Id
+GET {{host}}/api/user/1
+Authorization: Bearer {{token}}
+
+### Create User
+POST {{host}}/api/user
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "firstName": "Zara",
+  "lastName": "Ahmed",
+  "email": "zara@gmail.com",
+  "password": "Zara@12345",
+  "role": "Receptionist",
+  "phoneNo": "03007778899"
+}
+
+### Update User
+PUT {{host}}/api/user/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "firstName": "John",
+  "lastName": "Updated",
+  "phoneNo": "03001234999",
+  "isActive": true
+}
+
+### Delete User
+DELETE {{host}}/api/user/1
+Authorization: Bearer {{token}}
+
+###
+# ─── DOCTOR ──────────────────────────────────────────────────────
+
+### Get All Doctors
+GET {{host}}/api/doctor
+Authorization: Bearer {{token}}
+
+### Get Doctor By Id
+GET {{host}}/api/doctor/1
+Authorization: Bearer {{token}}
+
+### Create Doctor
+POST {{host}}/api/doctor
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "userId": 2,
+  "specialization": "Speech Therapy",
+  "bio": "Experienced speech therapist with 10 years experience",
+  "availableDays": "Mon,Wed,Fri",
+  "startTime": "09:00:00",
+  "endTime": "17:00:00"
+}
+
+### Update Doctor
+PUT {{host}}/api/doctor/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "specialization": "Occupational Therapy",
+  "bio": "Updated bio",
+  "availableDays": "Tue,Thu",
+  "startTime": "10:00:00",
+  "endTime": "18:00:00"
+}
+
+### Delete Doctor
+DELETE {{host}}/api/doctor/1
+Authorization: Bearer {{token}}
+
+###
+# ─── PATIENT ─────────────────────────────────────────────────────
+
+### Get All Patients
+GET {{host}}/api/patient
+Authorization: Bearer {{token}}
+
+### Get Patient By Id
+GET {{host}}/api/patient/1
+Authorization: Bearer {{token}}
+
+### Create Patient
+POST {{host}}/api/patient
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "guardianId": 4,
+  "firstName": "Omar",
+  "lastName": "Hassan",
+  "dateOfBirth": "2018-05-15",
+  "gender": "Male",
+  "medicalHistory": "Diagnosed with speech delay"
+}
+
+### Update Patient
+PUT {{host}}/api/patient/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "firstName": "Omar",
+  "lastName": "Hassan",
+  "dateOfBirth": "2018-05-15",
+  "gender": "Male",
+  "medicalHistory": "Updated medical history"
+}
+
+### Delete Patient
+DELETE {{host}}/api/patient/1
+Authorization: Bearer {{token}}
+
+###
+# ─── THERAPY ─────────────────────────────────────────────────────
+
+### Get All Therapies
+GET {{host}}/api/therapy
+Authorization: Bearer {{token}}
+
+### Get Therapy By Id
+GET {{host}}/api/therapy/1
+Authorization: Bearer {{token}}
+
+### Create Therapy
+POST {{host}}/api/therapy
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Speech Therapy",
+  "description": "Therapy to improve speech and communication skills",
+  "durationMinutes": 60,
+  "cost": 2500.00
+}
+
+### Update Therapy
+PUT {{host}}/api/therapy/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Speech Therapy Updated",
+  "description": "Updated description",
+  "durationMinutes": 45,
+  "cost": 3000.00
+}
+
+### Delete Therapy
+DELETE {{host}}/api/therapy/1
+Authorization: Bearer {{token}}
+
+###
+# ─── SLOT ────────────────────────────────────────────────────────
+
+### Get All Slots
+GET {{host}}/api/slot
+Authorization: Bearer {{token}}
+
+### Get Slot By Id
+GET {{host}}/api/slot/1
+Authorization: Bearer {{token}}
+
+### Create Slot
+POST {{host}}/api/slot
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "doctorId": 1,
+  "date": "2026-04-10",
+  "startTime": "09:00:00",
+  "endTime": "10:00:00"
+}
+
+### Update Slot
+PUT {{host}}/api/slot/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "date": "2026-04-11",
+  "startTime": "10:00:00",
+  "endTime": "11:00:00",
+  "isBooked": false
+}
+
+### Delete Slot
+DELETE {{host}}/api/slot/1
+Authorization: Bearer {{token}}
+
+###
+# ─── APPOINTMENT ─────────────────────────────────────────────────
+
+### Get All Appointments
+GET {{host}}/api/appointment
+Authorization: Bearer {{token}}
+
+### Get Appointment By Id
+GET {{host}}/api/appointment/1
+Authorization: Bearer {{token}}
+
+### Create Appointment
+POST {{host}}/api/appointment
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "patientId": 1,
+  "doctorId": 1,
+  "therapyId": 1,
+  "slotId": 1,
+  "receptionistId": 3,
+  "appointmentDate": "2026-04-10",
+  "startTime": "09:00:00",
+  "endTime": "10:00:00",
+  "notes": "First session for speech therapy"
+}
+
+### Update Appointment
+PUT {{host}}/api/appointment/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "appointmentDate": "2026-04-12",
+  "startTime": "10:00:00",
+  "endTime": "11:00:00",
+  "status": "Completed",
+  "notes": "Session completed successfully"
+}
+
+### Delete Appointment
+DELETE {{host}}/api/appointment/1
+Authorization: Bearer {{token}}
+
+###
+# ─── DOCTOR FINDING ──────────────────────────────────────────────
+
+### Get All Doctor Findings
+GET {{host}}/api/doctorfinding
+Authorization: Bearer {{token}}
+
+### Get Doctor Finding By Id
+GET {{host}}/api/doctorfinding/1
+Authorization: Bearer {{token}}
+
+### Create Doctor Finding
+POST {{host}}/api/doctorfinding
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "appointmentId": 1,
+  "observations": "Patient shows improvement in speech clarity",
+  "recommendations": "Continue therapy twice a week",
+  "nextSessionDate": "2026-04-17"
+}
+
+### Update Doctor Finding
+PUT {{host}}/api/doctorfinding/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "observations": "Significant improvement noted",
+  "recommendations": "Reduce to once a week",
+  "nextSessionDate": "2026-04-24"
+}
+
+### Delete Doctor Finding
+DELETE {{host}}/api/doctorfinding/1
+Authorization: Bearer {{token}}
+
+###
+# ─── PAYMENT ─────────────────────────────────────────────────────
+
+### Get All Payments
+GET {{host}}/api/payment
+Authorization: Bearer {{token}}
+
+### Get Payment By Id
+GET {{host}}/api/payment/1
+Authorization: Bearer {{token}}
+
+### Create Payment
+POST {{host}}/api/payment
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "appointmentId": 1,
+  "amount": 2500.00,
+  "paymentMethod": "Cash",
+  "transactionId": null
+}
+
+### Update Payment
+PUT {{host}}/api/payment/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "paymentMethod": "Credit_Card",
+  "status": "Paid",
+  "transactionId": "TXN123456789",
+  "paidAt": "2026-04-10T09:30:00"
+}
+
+### Delete Payment
+DELETE {{host}}/api/payment/1
+Authorization: Bearer {{token}}
+```
+
+---
+

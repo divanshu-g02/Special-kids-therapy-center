@@ -8,32 +8,27 @@ namespace Special_kids_therapy_center.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Payment> entity)
         {
-
             entity.HasKey(p => p.PaymentId);
 
             entity.Property(p => p.Amount)
-                  .IsRequired()
-                  .HasColumnType("decimal(10,2)");     
+                .IsRequired()
+                .HasColumnType("decimal(10,2)");
 
             entity.Property(p => p.PaymentMethod)
-                  .HasConversion<string>();             
+                .HasConversion<string>();
 
             entity.Property(p => p.TransactionId)
-                  .HasMaxLength(100);
+                .HasMaxLength(100);
 
             entity.Property(p => p.Status)
-                  .HasConversion<string>()             
-                  .HasDefaultValue(PaymentStatus.Pending);
+                .HasConversion<string>();
 
-            entity.Property(p => p.CreatedAt)
-                  .HasDefaultValueSql("GETDATE()");
+             
 
-           
             entity.HasOne(p => p.Appointment)
-                  .WithOne(a => a.Payment)
-                  .HasForeignKey<Payment>(p => p.AppointmentId)
-                  .OnDelete(DeleteBehavior.Restrict);
-
+                .WithOne(a => a.Payment)
+                .HasForeignKey<Payment>(p => p.AppointmentId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
