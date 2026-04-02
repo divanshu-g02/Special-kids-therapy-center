@@ -18,8 +18,13 @@ namespace Special_kids_therapy_center.Repository.Implementation
         {
             return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
         }
+        public async Task<bool> EmailExistsAsync(string email)
+        {
+            return await _context.Users
+                .AnyAsync(u => u.Email == email);
+        }
 
-    
+
         public async Task<User> RegisterAsync(User user)
         {
             await _context.Users.AddAsync(user);

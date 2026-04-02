@@ -8,7 +8,7 @@ namespace Special_kids_therapy_center.Services.Implementation
     public class AuthService : IAuthService
     {
         private readonly IAuthRepository _authRepository;
-        private readonly IJwtService _jwtService;        
+        private readonly IJwtService _jwtService;
 
         public AuthService(IAuthRepository authRepository, IJwtService jwtService)
         {
@@ -25,22 +25,22 @@ namespace Special_kids_therapy_center.Services.Implementation
             if (!BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
                 throw new UnauthorizedAccessException("Invalid email or password");
 
-            var token = _jwtService.GenerateToken(user);  
+            var token = _jwtService.GenerateToken(user);
 
             return new AuthResponseDto
             {
                 Email = user.Email,
                 FullName = $"{user.FirstName} {user.LastName}",
                 Role = user.Role.ToString(),
-                Token = token,                             
+                Token = token,
                 ExpiresAt = DateTime.Now.AddDays(1)
             };
         }
 
         public async Task<AuthResponseDto> RegisterAsync(RegisterDto dto)
         {
-            var exists = await _authRepository.GetByEmailAsync(dto.Email);
-            if (exists == null)
+            var exists = await _authRepository.EmailExistsAsync(dto.Email);
+            if (exists)
                 throw new InvalidOperationException("Email already registered");
 
             var user = new User
@@ -57,14 +57,14 @@ namespace Special_kids_therapy_center.Services.Implementation
 
             await _authRepository.RegisterAsync(user);
 
-            var token = _jwtService.GenerateToken(user);  
+            var token = _jwtService.GenerateToken(user);
 
             return new AuthResponseDto
             {
                 Email = user.Email,
                 FullName = $"{user.FirstName} {user.LastName}",
                 Role = user.Role.ToString(),
-                Token = token,                             
+                Token = token,
                 ExpiresAt = DateTime.Now.AddDays(1)
             };
         }

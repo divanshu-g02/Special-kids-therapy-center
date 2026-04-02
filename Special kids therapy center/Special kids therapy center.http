@@ -1,5 +1,5 @@
 @host = https://localhost:7288
-@token = 
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJhZG1pbkBnbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9naXZlbm5hbWUiOiJKb2huIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvc3VybmFtZSI6IkRvZSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNzc1MjA1MDQ3LCJpc3MiOiJTcGVjaWFsS2lkc1RoZXJhcHlDZW50ZXIiLCJhdWQiOiJTcGVjaWFsS2lkc1RoZXJhcHlDZW50ZXJVc2VycyJ9._2QPAEL1nyQVL7Fhf-RHxBmBmO4zIOIBqI8l4DWhiPk
 
 ###
 # ─── AUTH ────────────────────────────────────────────────────────
@@ -13,7 +13,7 @@ Content-Type: application/json
   "lastName": "Doe",
   "email": "admin@gmail.com",
   "password": "Admin@12345",
-  "role": "Admin",
+  "role": 0,
   "phoneNo": "03001234567"
 }
 

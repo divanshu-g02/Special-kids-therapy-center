@@ -29,12 +29,12 @@ namespace Special_kids_therapy_center
 
 
 
-            builder.Services.AddControllers()
-                .AddJsonOptions(options =>
-                {
-                    options.JsonSerializerOptions.Converters
-                        .Add(new JsonStringEnumConverter());
-                });
+            //builder.Services.AddControllers()
+            //    .AddJsonOptions(options =>
+            //    {
+            //        options.JsonSerializerOptions.Converters
+            //            .Add(new JsonStringEnumConverter());
+            //    });
 
             // ─── JWT Settings
             builder.Services.Configure<JwtSettings>(
@@ -91,7 +91,6 @@ namespace Special_kids_therapy_center
             builder.Services.AddScoped<ISlotService, SlotService>();
 
             // ─── Controllers 
-            builder.Services.AddControllers();
 
             var app = builder.Build();
 
