@@ -8,7 +8,6 @@ namespace Special_kids_therapy_center.DTOs.Appointment
 
         public int DoctorId { get; set; }
 
-
         public int TherapyId { get; set; }
         public int ReceptionistId { get; set; }
 

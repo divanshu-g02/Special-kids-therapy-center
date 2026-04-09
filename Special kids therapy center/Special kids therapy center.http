@@ -9,11 +9,11 @@ POST {{host}}/api/auth/register
 Content-Type: application/json
 
 {
-  "firstName": "John",
-  "lastName": "Doe",
-  "email": "admin@gmail.com",
-  "password": "Admin@12345",
-  "role": 0,
+  "firstName": "Divanshu",
+  "lastName": "G",
+  "email": "div@gmail.com",
+  "password": "Div@12345",
+  "role": ,
   "phoneNo": "03001234567"
 }
 

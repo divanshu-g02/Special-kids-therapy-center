@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="Special kids therapy center/Special kids therapy center.csproj" />
+  <Project Path="Special_kids_therapy_center.Tests/Special_kids_therapy_center.Tests.csproj" />
 </Solution>
