@@ -1,0 +1,50 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --brand:        #1A5F7A;
+  --brand-mid:    #2E8CA8;
+  --brand-dark:   #0D3D52;
+  --brand-light:  #EAF4F8;
+  --brand-border: rgba(26, 95, 122, 0.25);
+
+  --bg:           #F4F6F8;
+  --surface:      #FFFFFF;
+  --surface2:     #F0F3F5;
+  --border:       rgba(0, 0, 0, 0.1);
+  --border-mid:   rgba(0, 0, 0, 0.18);
+
+  --text:         #111827;
+  --text2:        #6B7280;
+  --text3:        #9CA3AF;
+
+  --red:          #E24B4A;
+  --orange:       #EF9F27;
+  --yellow-green: #639922;
+  --green:        #1D9E75;
+
+  --radius-sm:    6px;
+  --radius-md:    10px;
+  --radius-lg:    14px;
+  --radius-xl:    18px;
+
+  --font:         'DM Sans', sans-serif;
+  --font-display: 'DM Serif Display', serif;
+
+  --shadow-card:  0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.05);
+}
+
+html, body, #root {
+  height: 100%;
+  font-family: var(--font);
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+input, select, button, textarea {
+  font-family: var(--font);
+}
