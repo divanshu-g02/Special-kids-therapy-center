@@ -27,9 +27,16 @@ namespace Special_kids_therapy_center.Repository.Implementation
 
         public async Task<User> RegisterAsync(User user)
         {
-            await _context.Users.AddAsync(user);
-            await _context.SaveChangesAsync();
-            return user;
+            try
+            {
+                await _context.Users.AddAsync(user);
+                await _context.SaveChangesAsync();
+                return user;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("DB ERROR: " + ex.Message);
+            }
         }
     }
 }

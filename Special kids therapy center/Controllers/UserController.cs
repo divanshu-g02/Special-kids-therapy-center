@@ -20,7 +20,7 @@ namespace Special_kids_therapy_center.Controllers
 
         // GET api/user
         [HttpGet]
-        [Authorize(Roles = "Admin")]                    
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAll()
         {
             var result = await _userService.GetAllAsync();
@@ -29,16 +29,16 @@ namespace Special_kids_therapy_center.Controllers
 
         // GET api/user/5
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin")]                    
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetById(int id)
         {
             var result = await _userService.GetByIdAsync(id);
             return Ok(result);
         }
 
-        // POST api/user
+        // POST api/user  — public, no auth required
         [HttpPost]
-        [Authorize(Roles = "Admin")]                   
+        [AllowAnonymous]
         public async Task<IActionResult> Create([FromBody] UserCreateDto dto)
         {
             var result = await _userService.CreateAsync(dto);
@@ -47,7 +47,7 @@ namespace Special_kids_therapy_center.Controllers
 
         // PUT api/user/5
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")]                  
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update(int id, [FromBody] UserUpdateDto dto)
         {
             var result = await _userService.UpdateAsync(id, dto);
@@ -56,7 +56,7 @@ namespace Special_kids_therapy_center.Controllers
 
         // DELETE api/user/5
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]                    
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _userService.DeleteAsync(id);

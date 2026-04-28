@@ -29,12 +29,28 @@ namespace Special_kids_therapy_center
 
 
 
-            //builder.Services.AddControllers()
-            //    .AddJsonOptions(options =>
-            //    {
-            //        options.JsonSerializerOptions.Converters
-            //            .Add(new JsonStringEnumConverter());
-            //    });
+            builder.Services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.Converters
+                        .Add(new JsonStringEnumConverter());
+                });
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowReact",
+                    policy =>
+                    {
+                        policy.WithOrigins(
+                            "http://localhost:5173",
+                            "https://localhost:5173",
+                            "http://localhost:3000",
+                            "https://localhost:3000"
+                        )
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                    });
+            });
 
             // ─── JWT Settings
             builder.Services.Configure<JwtSettings>(
@@ -96,7 +112,15 @@ namespace Special_kids_therapy_center
 
             // ─── Middleware Pipeline
             app.UseMiddleware<ExceptionMiddleware>();
-            app.UseHttpsRedirection();
+
+            // Force disable HTTPS redirection in development
+            if (!app.Environment.IsDevelopment())
+            {
+                app.UseHttpsRedirection();
+            }
+
+            app.UseCors("AllowReact");
+
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();

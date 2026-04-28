@@ -5,7 +5,7 @@ namespace Special_kids_therapy_center.Models
 {
     public enum Roles
     {
-        Admin,
+        Admin = 1,
         Receptionist,
         Doctor,
         Patient,

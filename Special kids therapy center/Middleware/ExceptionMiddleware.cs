@@ -44,14 +44,16 @@ namespace Special_kids_therapy_center.Middleware
                 case UnauthorizedAccessException:
                     statusCode = HttpStatusCode.Unauthorized;
                     break;
+
+                case InvalidOperationException:
+                    statusCode = HttpStatusCode.Conflict;   
+                    break;
             }
 
             var response = new
             {
                 success = false,
-                message = statusCode == HttpStatusCode.InternalServerError
-                ? "An unexpected error occurred."
-                : ex.Message
+                message = ex.Message
             };
 
             context.Response.ContentType = "application/json";

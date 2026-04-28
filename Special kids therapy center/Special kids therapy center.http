@@ -1,5 +1,6 @@
+@Special kids therapy center_HostAddress = https://localhost:7288
 @host = https://localhost:7288
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJhZG1pbkBnbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9naXZlbm5hbWUiOiJKb2huIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvc3VybmFtZSI6IkRvZSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNzc1MjA1MDQ3LCJpc3MiOiJTcGVjaWFsS2lkc1RoZXJhcHlDZW50ZXIiLCJhdWQiOiJTcGVjaWFsS2lkc1RoZXJhcHlDZW50ZXJVc2VycyJ9._2QPAEL1nyQVL7Fhf-RHxBmBmO4zIOIBqI8l4DWhiPk
+@token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjciLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJyYWphdHNoYXJtYUBnbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9naXZlbm5hbWUiOiJSYWphdCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL3N1cm5hbWUiOiJTaGFybWEiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImV4cCI6MTc3Njg2MzA1MiwiaXNzIjoiU3BlY2lhbEtpZHNUaGVyYXB5Q2VudGVyIiwiYXVkIjoiU3BlY2lhbEtpZHNUaGVyYXB5Q2VudGVyVXNlcnMifQ.LsZWVFTBoLzXgQa2eUtQcqZIQ2DJwyCEBQrO3Lz5YJQ
 
 ###
 # ─── AUTH ────────────────────────────────────────────────────────
@@ -9,11 +10,11 @@ POST {{host}}/api/auth/register
 Content-Type: application/json
 
 {
-  "firstName": "Divanshu",
-  "lastName": "G",
-  "email": "div@gmail.com",
-  "password": "Div@12345",
-  "role": ,
+  "firstName": "Rajat",
+  "lastName": "Sharma",
+  "email": "rajatsharma@gmail.com",
+  "password": "Rajatshatma@123",
+  "role": 1,
   "phoneNo": "03001234567"
 }
 
@@ -61,8 +62,8 @@ POST {{host}}/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "admin@gmail.com",
-  "password": "Admin@12345"
+  "email": "divanshugarg23@gmail.com",
+  "password": "Div@12345"
 }
 
 ###
@@ -70,7 +71,7 @@ Content-Type: application/json
 
 ### Get All Users
 GET {{host}}/api/user
-Authorization: Bearer {{token}}
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjYiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJkaXZhbnNodWdhcmcyM0BnbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9naXZlbm5hbWUiOiJEaXZhbnNodSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL3N1cm5hbWUiOiJHYXJnIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiUmVjZXB0aW9uaXN0IiwiZXhwIjoxNzc2NzU1OTI0LCJpc3MiOiJTcGVjaWFsS2lkc1RoZXJhcHlDZW50ZXIiLCJhdWQiOiJTcGVjaWFsS2lkc1RoZXJhcHlDZW50ZXJVc2VycyJ9.xFuNObQKHPNnMQ4eAOCdWv83kP-PJIK68lQVQL7bMEQ
 
 ### Get User By Id
 GET {{host}}/api/user/1
@@ -393,3 +394,12 @@ Authorization: Bearer {{token}}
 
 ---
 
+
+POST {{Special kids therapy center_HostAddress}}/api/user
+Content-Type: application/json
+
+{
+  //UserCreateDto
+}
+
+###

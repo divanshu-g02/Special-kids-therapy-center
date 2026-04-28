@@ -39,34 +39,41 @@ namespace Special_kids_therapy_center.Services.Implementation
 
         public async Task<AuthResponseDto> RegisterAsync(RegisterDto dto)
         {
-            var exists = await _authRepository.EmailExistsAsync(dto.Email);
-            if (exists)
-                throw new InvalidOperationException("Email already registered");
-
-            var user = new User
+            try
             {
-                FirstName = dto.FirstName,
-                LastName = dto.LastName,
-                Email = dto.Email,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
-                Role = dto.Role,
-                PhoneNo = dto.PhoneNo,
-                CreatedAt = DateTime.Now,
-                IsActive = true
-            };
+                var exists = await _authRepository.EmailExistsAsync(dto.Email);
+                if (exists)
+                    throw new InvalidOperationException("Email already registered");
 
-            await _authRepository.RegisterAsync(user);
+                var user = new User
+                {
+                    FirstName = dto.FirstName,
+                    LastName = dto.LastName,
+                    Email = dto.Email,
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
+                    Role = dto.Role,
+                    PhoneNo = dto.PhoneNo,
+                    CreatedAt = DateTime.Now,
+                    IsActive = true
+                };
 
-            var token = _jwtService.GenerateToken(user);
+                await _authRepository.RegisterAsync(user);
 
-            return new AuthResponseDto
+                var token = _jwtService.GenerateToken(user);
+
+                return new AuthResponseDto
+                {
+                    Email = user.Email,
+                    FullName = $"{user.FirstName} {user.LastName}",
+                    Role = user.Role.ToString(),
+                    Token = token,
+                    ExpiresAt = DateTime.Now.AddDays(1)
+                };
+            }
+            catch (Exception ex)
             {
-                Email = user.Email,
-                FullName = $"{user.FirstName} {user.LastName}",
-                Role = user.Role.ToString(),
-                Token = token,
-                ExpiresAt = DateTime.Now.AddDays(1)
-            };
+                throw new Exception("Register failed: " + ex.Message);
+            }
         }
     }
 }
