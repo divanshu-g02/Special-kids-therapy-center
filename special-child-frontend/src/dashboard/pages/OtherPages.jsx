@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { useApi } from '../../../src/dashboard/useApi';
-import { patientsApi, appointmentsApi, slotsApi, paymentsApi, findingsApi, therapiesApi } from '../../services/apiService';
+import { useApi } from '../../hooks/useApi';
+import { patientsApi, appointmentsApi, slotsApi, paymentsApi, findingsApi, therapiesApi } from '../../services/api';
 import { StatCard, DataTable, Badge, Modal, Field, Input, Select, Textarea, SectionHeader, ActionButton, Alert } from '../../../src/dashboard/DashboardComponents';
-import { getSession } from '../../services/authService';
+import { getSession } from '../../services/api';
 
 const GENDERS = ['Male', 'Female', 'Other'];
 

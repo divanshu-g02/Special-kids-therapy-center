@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { useApi } from '../../../src/dashboard/useApi';
-import { doctorsApi } from '../../services/apiService';
+import { useApi } from '../../hooks/useApi';
+import { doctorsApi } from '../../services/doctorService';
 import { StatCard, DataTable, Modal, Field, Input, Textarea, SectionHeader, ActionButton, Alert } from '../../../src/dashboard/DashboardComponents';
-import { getSession } from '../../services/authService';
+import { getSession } from '../../services/api';
 
 export default function DoctorsPage() {
   const { role } = getSession();

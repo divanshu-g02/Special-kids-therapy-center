@@ -1,17 +1,8 @@
-import axios from 'axios';
+// src/services/authService.js
+// Only handles: login, register, session storage
+// Nothing else
 
-const API_BASE_URL = 'http://localhost:5022/api';
-
-const api = axios.create({
-  baseURL: API_BASE_URL,
-  headers: { 'Content-Type': 'application/json' },
-});
-
-api.interceptors.request.use(config => {
-  const token = localStorage.getItem('token');
-  if (token) config.headers.Authorization = `Bearer ${token}`;
-  return config;
-});
+import api from './api';
 
 const ROLE_MAP = { Admin: 1, Receptionist: 2, Doctor: 3, Patient: 4, Guardian: 5 };
 
@@ -20,28 +11,20 @@ export async function loginUser({ email, password }) {
     const res = await api.post('/auth/login', { email, password });
     return res.data;
   } catch (err) {
-    const message = err.response?.data?.message || 'Invalid email or password.';
-    throw new Error(message);
+    throw new Error(err.response?.data?.message || 'Invalid email or password.');
   }
 }
 
 export async function registerUser({ firstName, lastName, email, password, role, phoneNo }) {
   try {
-    const payload = {
-      firstName,
-      lastName,
-      email,
-      password,
+    const res = await api.post('/auth/register', {
+      firstName, lastName, email, password,
       role: ROLE_MAP[role],
       phoneNo: phoneNo || null,
-    };
-    console.log('Sending payload:', JSON.stringify(payload)); // ADD THIS
-    const res = await api.post('/auth/register', payload);
+    });
     return res.data;
   } catch (err) {
-    console.log('Error response:', err.response);  // ADD THIS
-    const message = err.response?.data?.message || 'Registration failed. Please try again.';
-    throw new Error(message);
+    throw new Error(err.response?.data?.message || 'Registration failed.');
   }
 }
 
@@ -71,5 +54,3 @@ export function getSession() {
 export function isLoggedIn() {
   return !!localStorage.getItem('token');
 }
-
-export default api;

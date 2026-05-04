@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { StatCard } from '../DashboardComponents';
-import { usersApi, doctorsApi, patientsApi, appointmentsApi, paymentsApi } from '../../services/apiService';
+import {userService} from '../../services/userService';
+import { doctorService } from '../../services/doctorService';
+import { patientService } from '../../services/patientService';
+import { appointmentService } from '../../services/appointmentService';
+import { paymentService } from '../../services/paymentService';
+// import { usersApi, doctorsApi, patientsApi, appointmentsApi, paymentsApi } from '../../services/api';
 import { getSession } from '../../services/authService';
 
 const BRAND = '#1A5F7A';
