@@ -1,7 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { useApi } from '../../../hooks/useApi';
 import { getAllFindings, createFinding, updateFinding } from '../../../services/findingService';
+import { getAllAppointments } from '../../../services/appointmentService';
+import { getDoctorByUserId } from '../../../services/doctorService';
+import { getSession } from '../../../services/authService';
 import StatCard from '../../../components/ui/StatCard';
 import DataTable from '../../../components/ui/DataTable';
 import Modal from '../../../components/ui/Modal';
@@ -9,13 +12,41 @@ import Button from '../../../components/ui/Buttons';
 import { Field, Input, Textarea } from '../../../components/ui/FormFields';
 
 export default function DoctorFindings() {
+  const session = getSession();
   const { data: findings, loading, error, refetch } = useApi(getAllFindings);
+  const { data: appointments } = useApi(getAllAppointments);
+  const [doctorId, setDoctorId] = useState(null);
   const [modal,    setModal]    = useState(null);
   const [selected, setSelected] = useState(null);
   const [saving,   setSaving]   = useState(false);
   const [form,     setForm]     = useState({
     appointmentId: '', observations: '', recommendations: '', nextSessionDate: '',
   });
+
+  // ✅ Fetch doctor ID from session userId on mount
+  useEffect(() => {
+    const fetchDoctorId = async () => {
+      if (session.userId) {
+        try {
+          const doctor = await getDoctorByUserId(parseInt(session.userId));
+          setDoctorId(doctor.doctorId);
+        } catch (err) {
+          console.warn('Could not fetch doctor ID:', err.message);
+        }
+      }
+    };
+    fetchDoctorId();
+  }, [session.userId]);
+
+  // ✅ Filter appointments by logged-in doctor
+  const myAppointments = doctorId
+    ? appointments.filter(a => a.doctorId === doctorId)
+    : [];
+
+  // ✅ Filter findings by logged-in doctor's appointments
+  const myFindings = doctorId
+    ? findings.filter(f => myAppointments.some(a => a.appointmentId === f.appointmentId))
+    : findings;
 
   const set = key => e => setForm(f => ({ ...f, [key]: e.target.value }));
 
@@ -86,8 +117,8 @@ export default function DoctorFindings() {
   return (
     <div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '14px', marginBottom: '24px' }}>
-        <StatCard label="Total Notes"    value={findings.length} />
-        <StatCard label="With Follow-up" value={findings.filter(f => f.nextSessionDate).length} color="#2E8CA8" />
+        <StatCard label="Total Notes"    value={myFindings.length} />
+        <StatCard label="With Follow-up" value={myFindings.filter(f => f.nextSessionDate).length} color="#2E8CA8" />
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
@@ -95,13 +126,20 @@ export default function DoctorFindings() {
         <Button onClick={openCreate}>+ Add Finding</Button>
       </div>
 
-      <DataTable columns={columns} rows={findings} loading={loading} error={error} onEdit={openEdit} />
+      <DataTable columns={columns} rows={myFindings} loading={loading} error={error} onEdit={openEdit} />
 
       {modal === 'create' && (
         <Modal title="Add Session Finding" onClose={closeModal}>
           <form onSubmit={handleCreate}>
-            <Field label="Appointment ID" required>
-              <Input type="number" value={form.appointmentId} onChange={set('appointmentId')} required />
+            <Field label="Appointment" required>
+              <Select value={form.appointmentId} onChange={set('appointmentId')} required>
+                <option value="">Select appointment...</option>
+                {appointments.map(a => (
+                  <option key={a.appointmentId} value={a.appointmentId}>
+                    #{a.appointmentId} — {a.patientName} on {a.appointmentDate}
+                  </option>
+                ))}
+              </Select>
             </Field>
             <Field label="Observations">
               <Textarea value={form.observations} onChange={set('observations')} rows={3} />

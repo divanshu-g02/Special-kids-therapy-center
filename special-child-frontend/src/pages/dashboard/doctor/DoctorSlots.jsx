@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { useApi } from '../../../hooks/useApi';
 import { getAllSlots, createSlot, deleteSlot } from '../../../services/slotService';
+import { getDoctorByUserId } from '../../../services/doctorService';
 import { getSession } from '../../../services/authService';
 import StatCard from '../../../components/ui/StatCard';
 import DataTable from '../../../components/ui/DataTable';
@@ -12,15 +13,33 @@ import { Field, Input, FieldRow } from '../../../components/ui/FormFields';
 
 export default function DoctorSlots() {
   const { data: slots, loading, error, refetch } = useApi(getAllSlots);
+  const session = getSession();
+
   const [modal,    setModal]    = useState(null);
   const [selected, setSelected] = useState(null);
   const [saving,   setSaving]   = useState(false);
-  const [form,     setForm]     = useState({ doctorId: '', date: '', startTime: '', endTime: '' });
+  const [doctorId, setDoctorId] = useState('');
+  const [form,     setForm]     = useState({ date: '', startTime: '', endTime: '' });
+
+  useEffect(() => {
+    const fetchDoctorId = async () => {
+      if (session.userId) {
+        try {
+          const doctor = await getDoctorByUserId(parseInt(session.userId));
+          setDoctorId(doctor.doctorId?.toString() || '');
+        } catch (err) {
+          console.warn('Could not fetch doctor ID:', err.message);
+          toast.error('Unable to load your doctor profile. Please enter your Doctor ID manually.');
+        }
+      }
+    };
+    fetchDoctorId();
+  }, [session.userId]);
 
   const set = key => e => setForm(f => ({ ...f, [key]: e.target.value }));
 
   function openCreate() {
-    setForm({ doctorId: '', date: '', startTime: '', endTime: '' });
+    setForm({ date: '', startTime: '', endTime: '' });
     setModal('create');
   }
   function openDelete(row) { setSelected(row); setModal('delete'); }
@@ -30,7 +49,7 @@ export default function DoctorSlots() {
     e.preventDefault();
     setSaving(true);
     try {
-      await createSlot({ ...form, doctorId: parseInt(form.doctorId) });
+      await createSlot({ ...form, doctorId: parseInt(doctorId || 0) });
       toast.success('Slot created.');
       refetch();
       closeModal();
@@ -69,7 +88,7 @@ export default function DoctorSlots() {
     <div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '14px', marginBottom: '24px' }}>
         <StatCard label="Total Slots" value={slots.length} />
-        <StatCard label="Available"   value={available}              color="#1D9E75" />
+        <StatCard label="Available"   value={available}               color="#1D9E75" />
         <StatCard label="Booked"      value={slots.length - available} color="#EF9F27" />
       </div>
 
@@ -83,9 +102,15 @@ export default function DoctorSlots() {
       {modal === 'create' && (
         <Modal title="Add Slot" onClose={closeModal} width="400px">
           <form onSubmit={handleCreate}>
-            <Field label="Doctor ID" required>
-              <Input type="number" value={form.doctorId} onChange={set('doctorId')} required />
-            </Field>
+            {doctorId ? (
+              <Field label="Doctor ID">
+                <Input type="text" value={doctorId} disabled />
+              </Field>
+            ) : (
+              <Field label="Doctor ID" required>
+                <Input type="number" value={doctorId} onChange={e => setDoctorId(e.target.value)} required />
+              </Field>
+            )}
             <Field label="Date" required>
               <Input type="date" value={form.date} onChange={set('date')} required />
             </Field>

@@ -30,6 +30,7 @@ export async function registerUser({ firstName, lastName, email, password, role,
 
 export function saveSession(data) {
   localStorage.setItem('token',    data.token);
+  localStorage.setItem('userId',   data.userId);
   localStorage.setItem('role',     data.role);
   localStorage.setItem('fullName', data.fullName);
   localStorage.setItem('email',    data.email);
@@ -37,6 +38,7 @@ export function saveSession(data) {
 
 export function clearSession() {
   localStorage.removeItem('token');
+  localStorage.removeItem('userId');
   localStorage.removeItem('role');
   localStorage.removeItem('fullName');
   localStorage.removeItem('email');
@@ -45,6 +47,7 @@ export function clearSession() {
 export function getSession() {
   return {
     token:    localStorage.getItem('token'),
+    userId:   localStorage.getItem('userId'),
     role:     localStorage.getItem('role'),
     fullName: localStorage.getItem('fullName'),
     email:    localStorage.getItem('email'),

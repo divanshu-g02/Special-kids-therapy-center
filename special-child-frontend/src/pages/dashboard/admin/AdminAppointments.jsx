@@ -2,6 +2,10 @@ import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useApi } from '../../../hooks/useApi';
 import { getAllAppointments, createAppointment, updateAppointment, deleteAppointment } from '../../../services/appointmentService';
+import { getAllPatients } from '../../../services/patientService';
+import { getAllDoctors } from '../../../services/doctorService';
+import { getAllTherapies } from '../../../services/therapyService';
+import { getAllUsers } from '../../../services/userService';
 import { getSession } from '../../../services/authService';
 import StatCard from '../../../components/ui/StatCard';
 import DataTable from '../../../components/ui/DataTable';
@@ -15,6 +19,10 @@ const STATUSES = ['Scheduled', 'Completed', 'Cancelled', 'NoShow'];
 export default function AdminAppointments() {
   const { role } = getSession();
   const { data: appointments, loading, error, refetch } = useApi(getAllAppointments);
+  const { data: patients = [] }  = useApi(getAllPatients);
+  const { data: doctors = [] }   = useApi(getAllDoctors);
+  const { data: therapies = [] } = useApi(getAllTherapies);
+  const { data: users = [] }     = useApi(getAllUsers);
 
   const [modal,    setModal]    = useState(null);
   const [selected, setSelected] = useState(null);
@@ -59,7 +67,7 @@ export default function AdminAppointments() {
         patientId:       parseInt(form.patientId),
         doctorId:        parseInt(form.doctorId),
         therapyId:       parseInt(form.therapyId),
-        receptionistId:  parseInt(form.receptionistId),
+        receptionistId:  form.receptionistId ? parseInt(form.receptionistId) : null,
         appointmentDate: form.appointmentDate,
         startTime:       form.startTime,
         endTime:         form.endTime,
@@ -141,12 +149,48 @@ export default function AdminAppointments() {
         <Modal title="Book Appointment" onClose={closeModal}>
           <form onSubmit={handleCreate}>
             <FieldRow>
-              <Field label="Patient ID" required><Input type="number" value={form.patientId} onChange={set('patientId')} required /></Field>
-              <Field label="Doctor ID"  required><Input type="number" value={form.doctorId}  onChange={set('doctorId')}  required /></Field>
+              <Field label="Patient" required>
+                <Select value={form.patientId} onChange={set('patientId')} required>
+                  <option value="">Select patient...</option>
+                  {patients.map(p => (
+                    <option key={p.patientId} value={p.patientId}>
+                      {p.firstName} {p.lastName}
+                    </option>
+                  ))}
+                </Select>
+              </Field>
+              <Field label="Doctor" required>
+                <Select value={form.doctorId} onChange={set('doctorId')} required>
+                  <option value="">Select doctor...</option>
+                  {doctors.map(d => (
+                    <option key={d.doctorId} value={d.doctorId}>
+                      {d.fullName}
+                    </option>
+                  ))}
+                </Select>
+              </Field>
             </FieldRow>
             <FieldRow>
-              <Field label="Therapy ID"      required><Input type="number" value={form.therapyId}      onChange={set('therapyId')}      required /></Field>
-              <Field label="Receptionist ID" required><Input type="number" value={form.receptionistId} onChange={set('receptionistId')} required /></Field>
+              <Field label="Therapy" required>
+                <Select value={form.therapyId} onChange={set('therapyId')} required>
+                  <option value="">Select therapy...</option>
+                  {therapies.map(t => (
+                    <option key={t.therapyId} value={t.therapyId}>
+                      {t.name}
+                    </option>
+                  ))}
+                </Select>
+              </Field>
+              <Field label="Receptionist">
+                <Select value={form.receptionistId} onChange={set('receptionistId')}>
+                  <option value="">Select receptionist...</option>
+                  {users.filter(u => u.role === 'Receptionist').map(u => (
+                    <option key={u.userId} value={u.userId}>
+                      {u.firstName} {u.lastName}
+                    </option>
+                  ))}
+                </Select>
+              </Field>
             </FieldRow>
             <Field label="Date" required>
               <Input type="date" value={form.appointmentDate} onChange={set('appointmentDate')} required />

@@ -8,6 +8,10 @@ export async function getDoctorById(id) {
   const res = await api.get(`/doctor/${id}`);
   return res.data;
 }
+export async function getDoctorByUserId(userId) {
+  const res = await api.get(`/doctor/by-user/${userId}`);
+  return res.data;
+}
 export async function createDoctor(dto) {
   const res = await api.post('/doctor', dto);
   return res.data;

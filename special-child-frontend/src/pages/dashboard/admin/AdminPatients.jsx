@@ -2,6 +2,7 @@ import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useApi } from '../../../hooks/useApi';
 import { getAllPatients, createPatient, updatePatient, deletePatient } from '../../../services/patientService';
+import { getAllUsers } from '../../../services/userService';
 import { getSession } from '../../../services/authService';
 import StatCard from '../../../components/ui/StatCard';
 import DataTable from '../../../components/ui/DataTable';
@@ -15,6 +16,7 @@ const GENDERS = ['Male', 'Female', 'Other'];
 export default function AdminPatients() {
   const { role } = getSession();
   const { data: patients, loading, error, refetch } = useApi(getAllPatients);
+  const { data: users = [] } = useApi(getAllUsers);
 
   const [modal,    setModal]    = useState(null);
   const [selected, setSelected] = useState(null);
@@ -56,7 +58,7 @@ export default function AdminPatients() {
     e.preventDefault();
     setSaving(true);
     try {
-      await createPatient({ ...form, guardianId: parseInt(form.guardianId) });
+      await createPatient({ ...form, guardianId: form.guardianId ? parseInt(form.guardianId) : null });
       toast.success('Patient added.');
       refetch();
       closeModal();
@@ -126,8 +128,15 @@ export default function AdminPatients() {
       {modal === 'create' && (
         <Modal title="Add Patient" onClose={closeModal}>
           <form onSubmit={handleCreate}>
-            <Field label="Guardian User ID" required>
-              <Input type="number" value={form.guardianId} onChange={set('guardianId')} required />
+            <Field label="Guardian">
+              <Select value={form.guardianId} onChange={set('guardianId')}>
+                <option value="">Select guardian (optional)...</option>
+                {users.filter(u => u.role === 'Guardian').map(u => (
+                  <option key={u.userId} value={u.userId}>
+                    {u.firstName} {u.lastName} — {u.email}
+                  </option>
+                ))}
+              </Select>
             </Field>
             <FieldRow>
               <Field label="First Name" required>

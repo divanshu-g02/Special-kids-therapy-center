@@ -2,17 +2,19 @@ import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useApi } from '../../../hooks/useApi';
 import { getAllSlots, createSlot, deleteSlot } from '../../../services/slotService';
+import { getAllDoctors } from '../../../services/doctorService';
 import { getSession } from '../../../services/authService';
 import StatCard from '../../../components/ui/StatCard';
 import DataTable from '../../../components/ui/DataTable';
 import Badge from '../../../components/ui/Badges';
 import Modal from '../../../components/ui/Modal';
 import Button from '../../../components/ui/Buttons';
-import { Field, Input, FieldRow } from '../../../components/ui/FormFields';
+import { Field, Input, FieldRow, Select } from '../../../components/ui/FormFields';
 
 export default function AdminSlots() {
   const { role } = getSession();
   const { data: slots, loading, error, refetch } = useApi(getAllSlots);
+  const { data: doctors = [] } = useApi(getAllDoctors);
 
   const [modal,    setModal]    = useState(null);
   const [selected, setSelected] = useState(null);
@@ -94,8 +96,15 @@ export default function AdminSlots() {
       {modal === 'create' && (
         <Modal title="Add Slot" onClose={closeModal} width="400px">
           <form onSubmit={handleCreate}>
-            <Field label="Doctor ID" required>
-              <Input type="number" value={form.doctorId} onChange={set('doctorId')} required />
+            <Field label="Doctor" required>
+              <Select value={form.doctorId} onChange={set('doctorId')} required>
+                <option value="">Select doctor...</option>
+                {doctors.map(d => (
+                  <option key={d.doctorId} value={d.doctorId}>
+                    {d.fullName} — {d.specialization || 'General'}
+                  </option>
+                ))}
+              </Select>
             </Field>
             <Field label="Date" required>
               <Input type="date" value={form.date} onChange={set('date')} required />

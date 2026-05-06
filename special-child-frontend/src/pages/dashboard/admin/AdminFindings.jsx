@@ -2,16 +2,18 @@ import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useApi } from '../../../hooks/useApi';
 import { getAllFindings, createFinding, updateFinding, deleteFinding } from '../../../services/findingService';
+import { getAllAppointments } from '../../../services/appointmentService';
 import { getSession } from '../../../services/authService';
 import StatCard from '../../../components/ui/StatCard';
 import DataTable from '../../../components/ui/DataTable';
 import Modal from '../../../components/ui/Modal';
 import Button from '../../../components/ui/Buttons';
-import { Field, Input, Textarea } from '../../../components/ui/FormFields';
+import { Field, Input, Textarea, Select } from '../../../components/ui/FormFields';
 
 export default function AdminFindings() {
   const { role } = getSession();
   const { data: findings, loading, error, refetch } = useApi(getAllFindings);
+  const { data: appointments = [] } = useApi(getAllAppointments);
 
   const [modal,    setModal]    = useState(null);
   const [selected, setSelected] = useState(null);
@@ -132,8 +134,15 @@ export default function AdminFindings() {
       {modal === 'create' && (
         <Modal title="Add Session Finding" onClose={closeModal}>
           <form onSubmit={handleCreate}>
-            <Field label="Appointment ID" required>
-              <Input type="number" value={form.appointmentId} onChange={set('appointmentId')} required />
+            <Field label="Appointment" required>
+              <Select value={form.appointmentId} onChange={set('appointmentId')} required>
+                <option value="">Select appointment...</option>
+                {appointments.map(a => (
+                  <option key={a.appointmentId} value={a.appointmentId}>
+                    #{a.appointmentId} — {a.patientName} with {a.doctorName} on {a.appointmentDate}
+                  </option>
+                ))}
+              </Select>
             </Field>
             <Field label="Observations">
               <Textarea value={form.observations} onChange={set('observations')} rows={3} />

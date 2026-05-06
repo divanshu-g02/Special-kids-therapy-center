@@ -8,6 +8,10 @@ export async function getPatientById(id) {
   const res = await api.get(`/patient/${id}`);
   return res.data;
 }
+export async function getPatientByUserId(userId) {
+  const res = await api.get(`/patient/by-user/${userId}`);
+  return res.data;
+}
 export async function createPatient(dto) {
   const res = await api.post('/patient', dto);
   return res.data;

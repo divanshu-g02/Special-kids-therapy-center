@@ -2,6 +2,7 @@ import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useApi } from '../../../hooks/useApi';
 import { getAllPayments, createPayment, updatePayment } from '../../../services/paymentService';
+import { getAllAppointments } from '../../../services/appointmentService';
 import StatCard from '../../../components/ui/StatCard';
 import DataTable from '../../../components/ui/DataTable';
 import Badge from '../../../components/ui/Badges';
@@ -18,6 +19,7 @@ function payColor(s) {
 
 export default function ReceptionistPayments() {
   const { data: payments, loading, error, refetch } = useApi(getAllPayments);
+  const { data: appointments = [] } = useApi(getAllAppointments);
   const [modal,    setModal]    = useState(null);
   const [selected, setSelected] = useState(null);
   const [saving,   setSaving]   = useState(false);
@@ -103,8 +105,15 @@ export default function ReceptionistPayments() {
       {modal === 'create' && (
         <Modal title="Record Payment" onClose={closeModal}>
           <form onSubmit={handleCreate}>
-            <Field label="Appointment ID" required>
-              <Input type="number" value={form.appointmentId} onChange={set('appointmentId')} required />
+            <Field label="Appointment" required>
+              <Select value={form.appointmentId} onChange={set('appointmentId')} required>
+                <option value="">Select appointment...</option>
+                {appointments.map(a => (
+                  <option key={a.appointmentId} value={a.appointmentId}>
+                    #{a.appointmentId} — {a.patientName} ({a.appointmentDate})
+                  </option>
+                ))}
+              </Select>
             </Field>
             <FieldRow>
               <Field label="Amount (Rs.)" required>

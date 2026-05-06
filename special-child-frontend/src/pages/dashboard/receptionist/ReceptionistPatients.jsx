@@ -21,8 +21,8 @@ export default function ReceptionistPatients() {
   // ✅ Fetch all users (we'll filter guardians)
   const { data: users = [] } = useApi(getAllUsers);
 
-  // ✅ Filter only guardians (role = 5)
-  const guardians = users.filter(u => u.role === 5);
+  // ✅ Filter only guardians (role = 'Guardian' as string)
+  const guardians = users.filter(u => u.role === 'Guardian');
 
   const [modal, setModal] = useState(null);
   const [selected, setSelected] = useState(null);

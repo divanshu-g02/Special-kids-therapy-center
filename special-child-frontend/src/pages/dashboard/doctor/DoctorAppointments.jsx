@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { useApi } from '../../../hooks/useApi';
 import { getAllAppointments, updateAppointment } from '../../../services/appointmentService';
+import { getDoctorByUserId } from '../../../services/doctorService';
+import { getSession } from '../../../services/authService';
 import StatCard from '../../../components/ui/StatCard';
 import DataTable from '../../../components/ui/DataTable';
 import Badge from '../../../components/ui/Badges';
@@ -16,11 +18,28 @@ function statusColor(s) {
 }
 
 export default function DoctorAppointments() {
+  const session = getSession();
   const { data: appointments, loading, error, refetch } = useApi(getAllAppointments);
+  const [doctorId, setDoctorId] = useState(null);
   const [modal,    setModal]    = useState(null);
   const [selected, setSelected] = useState(null);
   const [saving,   setSaving]   = useState(false);
   const [editForm, setEditForm] = useState({ status: '', notes: '' });
+
+  // ✅ Fetch doctor ID from session userId on mount
+  useEffect(() => {
+    const fetchDoctorId = async () => {
+      if (session.userId) {
+        try {
+          const doctor = await getDoctorByUserId(parseInt(session.userId));
+          setDoctorId(doctor.doctorId);
+        } catch (err) {
+          console.warn('Could not fetch doctor ID:', err.message);
+        }
+      }
+    };
+    fetchDoctorId();
+  }, [session.userId]);
 
   const setE = key => e => setEditForm(f => ({ ...f, [key]: e.target.value }));
 
@@ -47,8 +66,13 @@ export default function DoctorAppointments() {
     }
   }
 
-  const scheduled = appointments.filter(a => a.status === 'Scheduled').length;
-  const completed = appointments.filter(a => a.status === 'Completed').length;
+  // ✅ Filter appointments by logged-in doctor
+  const myAppointments = doctorId 
+    ? appointments.filter(a => a.doctorId === doctorId)
+    : appointments;
+
+  const scheduled = myAppointments.filter(a => a.status === 'Scheduled').length;
+  const completed = myAppointments.filter(a => a.status === 'Completed').length;
 
   const columns = [
     { key: 'appointmentId',   label: '#' },
@@ -62,16 +86,16 @@ export default function DoctorAppointments() {
   return (
     <div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '14px', marginBottom: '24px' }}>
-        <StatCard label="Total"     value={appointments.length} />
+        <StatCard label="Total"     value={myAppointments.length} />
         <StatCard label="Scheduled" value={scheduled}           color="#2E8CA8" />
         <StatCard label="Completed" value={completed}           color="#1D9E75" />
-        <StatCard label="Cancelled" value={appointments.filter(a => a.status === 'Cancelled').length} color="#E24B4A" />
+        <StatCard label="Cancelled" value={myAppointments.filter(a => a.status === 'Cancelled').length} color="#E24B4A" />
       </div>
 
       <h2 style={{ fontSize: '15px', fontWeight: '500', color: '#111827', marginBottom: '16px' }}>My Appointments</h2>
       <DataTable
         columns={columns}
-        rows={appointments}
+        rows={myAppointments}
         loading={loading}
         error={error}
         onEdit={openEdit}

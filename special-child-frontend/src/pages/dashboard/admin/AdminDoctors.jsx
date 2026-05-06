@@ -2,16 +2,18 @@ import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useApi } from '../../../hooks/useApi';
 import { getAllDoctors, createDoctor, updateDoctor, deleteDoctor } from '../../../services/doctorService';
+import { getAllUsers } from '../../../services/userService';
 import { getSession } from '../../../services/authService';
 import StatCard from '../../../components/ui/StatCard';
 import DataTable from '../../../components/ui/DataTable';
 import Modal from '../../../components/ui/Modal';
 import Button from '../../../components/ui/Buttons';
-import { Field, Input, Textarea, FieldRow } from '../../../components/ui/FormFields';
+import { Field, Input, Textarea, FieldRow, Select } from '../../../components/ui/FormFields';
 
 export default function AdminDoctors() {
   const { role } = getSession();
   const { data: doctors, loading, error, refetch } = useApi(getAllDoctors);
+  const { data: users = [] } = useApi(getAllUsers);
 
   const [modal,    setModal]    = useState(null);
   const [selected, setSelected] = useState(null);
@@ -161,9 +163,15 @@ export default function AdminDoctors() {
       {modal === 'create' && (
         <Modal title="Add Doctor Profile" onClose={closeModal}>
           <form onSubmit={handleCreate}>
-            <Field label="User ID" required>
-              {/* Must be an existing user with Doctor role */}
-              <Input type="number" value={form.userId} onChange={set('userId')} required />
+            <Field label="User" required>
+              <Select value={form.userId} onChange={set('userId')} required>
+                <option value="">Select user...</option>
+                {users.filter(u => u.role === 'Doctor').map(u => (
+                  <option key={u.userId} value={u.userId}>
+                    {u.firstName} {u.lastName} — {u.email}
+                  </option>
+                ))}
+              </Select>
             </Field>
             <Field label="Specialization">
               <Input value={form.specialization} onChange={set('specialization')} placeholder="e.g. Speech Therapy" />

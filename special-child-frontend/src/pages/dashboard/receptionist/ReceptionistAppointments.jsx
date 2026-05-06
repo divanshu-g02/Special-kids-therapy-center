@@ -93,8 +93,8 @@ export default function ReceptionistAppointments() {
         doctorId: parseInt(form.doctorId),
         therapyId: parseInt(form.therapyId),
 
-        // ✅ AUTO receptionist (IMPORTANT)
-        receptionistId: parseInt(session.token ? 2 : 0), // 👈 replace if backend uses actual userId
+        // ✅ AUTO receptionist using logged-in user's ID
+        receptionistId: parseInt(session.userId || 0),
 
         appointmentDate: form.appointmentDate,
         startTime: form.startTime,
