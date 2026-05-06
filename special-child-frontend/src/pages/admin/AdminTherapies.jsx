@@ -1,15 +1,17 @@
-// src/pages/dashboard/admin/AdminTherapies.jsx
+// src/pages/admin/AdminTherapies.jsx
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useApi } from '../../../hooks/useApi';
 import { getAllTherapies, createTherapy, updateTherapy, deleteTherapy } from '../../../services/therapyService';
+import { getSession } from '../../../services/authService';
 import StatCard from '../../../components/ui/StatCard';
 import DataTable from '../../../components/ui/DataTable';
 import Modal from '../../../components/ui/Modal';
-import Button from '../../../components/ui/Button';
+import Button from '../../../components/ui/Buttons';
 import { Field, Input, Textarea, FieldRow } from '../../../components/ui/FormFields';
 
 export default function AdminTherapies() {
+  const { role } = getSession();
   const { data: therapies, loading, error, refetch } = useApi(getAllTherapies);
 
   const [modal,    setModal]    = useState(null);
@@ -23,6 +25,7 @@ export default function AdminTherapies() {
   });
 
   const set = key => e => setForm(f => ({ ...f, [key]: e.target.value }));
+  const canWrite = role === 'Admin';
 
   function openCreate() {
     setForm({ name: '', description: '', durationMinutes: '', cost: '' });
@@ -123,12 +126,12 @@ export default function AdminTherapies() {
 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
         <h2 style={{ fontSize: '15px', fontWeight: '500', color: '#111827', margin: 0 }}>All Therapies</h2>
-        <Button onClick={openCreate}>+ Add Therapy</Button>
+        {canWrite && <Button onClick={openCreate}>+ Add Therapy</Button>}
       </div>
 
       <DataTable columns={columns} rows={therapies} loading={loading} error={error}
-        onEdit={openEdit}
-        onDelete={openDelete}
+        onEdit={canWrite ? openEdit : null}
+        onDelete={canWrite ? openDelete : null}
       />
 
       {modal === 'create' && (

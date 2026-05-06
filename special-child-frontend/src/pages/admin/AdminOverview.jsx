@@ -1,4 +1,4 @@
-// src/pages/dashboard/admin/AdminOverview.jsx
+// src/pages/admin/AdminOverview.jsx
 import { useEffect, useState } from 'react';
 import { getSession } from '../../../services/authService';
 import { getAllUsers } from '../../../services/userService';

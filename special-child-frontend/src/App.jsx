@@ -1,8 +1,8 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import LoginPage    from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
-import Dashboard    from './pages/Dashboard';
+import LoginPage    from './pages/auth/LoginPage';
+import RegisterPage from './pages/auth/RegisterPage';
+import Dashboard    from './pages/dashboard/Dashboard';
 import { isLoggedIn } from './services/authService';
 
 function PrivateRoute({ children }) {

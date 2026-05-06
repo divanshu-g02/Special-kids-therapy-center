@@ -44,7 +44,7 @@ const VARIANTS = {
 // disabled  → true when loading, prevents double clicks
 // type      → 'button' | 'submit' — important for forms
 // fullWidth → true makes button stretch full width
-export default function Button({
+export default function Buttons({
   children,
   onClick,
   variant  = 'primary',

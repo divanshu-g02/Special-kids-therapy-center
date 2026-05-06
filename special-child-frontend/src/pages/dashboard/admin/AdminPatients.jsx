@@ -5,9 +5,9 @@ import { getAllPatients, createPatient, updatePatient, deletePatient } from '../
 import { getSession } from '../../../services/authService';
 import StatCard from '../../../components/ui/StatCard';
 import DataTable from '../../../components/ui/DataTable';
-import Badge from '../../../components/ui/Badge';
+import Badge from '../../../components/ui/Badges';
 import Modal from '../../../components/ui/Modal';
-import Button from '../../../components/ui/Button';
+import Button from '../../../components/ui/Buttons';
 import { Field, Input, Select, Textarea, FieldRow } from '../../../components/ui/FormFields';
 
 const GENDERS = ['Male', 'Female', 'Other'];

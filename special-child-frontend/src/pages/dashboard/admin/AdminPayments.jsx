@@ -5,9 +5,9 @@ import { getAllPayments, createPayment, updatePayment } from '../../../services/
 import { getSession } from '../../../services/authService';
 import StatCard from '../../../components/ui/StatCard';
 import DataTable from '../../../components/ui/DataTable';
-import Badge, { paymentStatusColor } from '../../../components/ui/Badge';
+import Badge, { paymentStatusColor } from '../../../components/ui/Badges';
 import Modal from '../../../components/ui/Modal';
-import Button from '../../../components/ui/Button';
+import Button from '../../../components/ui/Buttons';
 import { Field, Input, Select, FieldRow } from '../../../components/ui/FormFields';
 
 const PAY_METHODS  = ['Cash', 'Card', 'BankTransfer', 'Online'];

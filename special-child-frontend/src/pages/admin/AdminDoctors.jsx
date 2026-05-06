@@ -6,7 +6,7 @@ import { getSession } from '../../../services/authService';
 import StatCard from '../../../components/ui/StatCard';
 import DataTable from '../../../components/ui/DataTable';
 import Modal from '../../../components/ui/Modal';
-import Button from '../../../components/ui/Button';
+import Button from '../../../components/ui/Buttons';
 import { Field, Input, Textarea, FieldRow } from '../../../components/ui/FormFields';
 
 export default function AdminDoctors() {
