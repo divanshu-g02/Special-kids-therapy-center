@@ -1,7 +1,9 @@
-﻿using Special_kids_therapy_center.DTOs.Auth;
+﻿using Microsoft.Extensions.Options;
+using Special_kids_therapy_center.DTOs.Auth;
 using Special_kids_therapy_center.Models;
 using Special_kids_therapy_center.Repository.Interface;
 using Special_kids_therapy_center.Services.Interface;
+using Special_kids_therapy_center.Helper;
 
 namespace Special_kids_therapy_center.Services.Implementation
 {
@@ -9,11 +11,13 @@ namespace Special_kids_therapy_center.Services.Implementation
     {
         private readonly IAuthRepository _authRepository;
         private readonly IJwtService _jwtService;
+        private readonly JwtSettings _jwtSettings;
 
-        public AuthService(IAuthRepository authRepository, IJwtService jwtService)
+        public AuthService(IAuthRepository authRepository, IJwtService jwtService, IOptions<JwtSettings> jwtSettings)
         {
             _authRepository = authRepository;
             _jwtService = jwtService;
+            _jwtSettings = jwtSettings.Value;
         }
 
         public async Task<AuthResponseDto> LoginAsync(LoginDto dto)
@@ -33,47 +37,40 @@ namespace Special_kids_therapy_center.Services.Implementation
                 FullName = $"{user.FirstName} {user.LastName}",
                 Role = user.Role.ToString(),
                 Token = token,
-                ExpiresAt = DateTime.Now.AddDays(1)
+                ExpiresAt = DateTime.Now.AddDays(_jwtSettings.ExpiryInDays)
             };
         }
 
         public async Task<AuthResponseDto> RegisterAsync(RegisterDto dto)
         {
-            try
+            var exists = await _authRepository.EmailExistsAsync(dto.Email);
+            if (exists)
+                throw new InvalidOperationException("Email already registered");
+
+            var user = new User
             {
-                var exists = await _authRepository.EmailExistsAsync(dto.Email);
-                if (exists)
-                    throw new InvalidOperationException("Email already registered");
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
+                Email = dto.Email,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
+                Role = dto.Role,
+                PhoneNo = dto.PhoneNo,
+                CreatedAt = DateTime.Now,
+                IsActive = true
+            };
 
-                var user = new User
-                {
-                    FirstName = dto.FirstName,
-                    LastName = dto.LastName,
-                    Email = dto.Email,
-                    PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
-                    Role = dto.Role,
-                    PhoneNo = dto.PhoneNo,
-                    CreatedAt = DateTime.Now,
-                    IsActive = true
-                };
+            await _authRepository.RegisterAsync(user);
 
-                await _authRepository.RegisterAsync(user);
+            var token = _jwtService.GenerateToken(user);
 
-                var token = _jwtService.GenerateToken(user);
-
-                return new AuthResponseDto
-                {
-                    Email = user.Email,
-                    FullName = $"{user.FirstName} {user.LastName}",
-                    Role = user.Role.ToString(),
-                    Token = token,
-                    ExpiresAt = DateTime.Now.AddDays(1)
-                };
-            }
-            catch (Exception ex)
+            return new AuthResponseDto
             {
-                throw new Exception("Register failed: " + ex.Message);
-            }
+                Email = user.Email,
+                FullName = $"{user.FirstName} {user.LastName}",
+                Role = user.Role.ToString(),
+                Token = token,
+                ExpiresAt = DateTime.Now.AddDays(_jwtSettings.ExpiryInDays)
+            };
         }
     }
 }

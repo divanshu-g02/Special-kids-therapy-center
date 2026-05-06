@@ -54,7 +54,7 @@ namespace Special_kids_therapy_center.Repository.Implementation
 
         public async Task<bool> DeleteAsync(int id)
         {
-            var user = await _context.Users.FirstAsync(x => x.UserId ==  id);
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.UserId ==  id);
             if (user == null) return false;
 
              _context.Users.Remove(user);

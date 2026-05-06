@@ -18,6 +18,10 @@ namespace Special_kids_therapy_center.Repository.Implementation
         {
             return _context.Doctors;
         }
+        public IQueryable<Doctor> GetByIdQueryable(int id)
+        {
+            return _context.Doctors.Where(d => d.DoctorId == id);
+        }
 
         public async Task<Doctor?> GetByIdAsync(int id)
         {

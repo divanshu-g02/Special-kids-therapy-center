@@ -13,7 +13,7 @@
 
 
         public User User { get; set; } = null!;
-        public ICollection<Slot> Slots { get; set; } = [];
-        public ICollection<Appointment> Appointments = [];
+        public ICollection<Slot> Slots { get; set; } = new List<Slot>();
+        public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
     }
 }

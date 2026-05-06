@@ -44,7 +44,13 @@ namespace Special_kids_therapy_center.Services.Implementation
 
         public async Task<AppointmentResponseDto?> GetByIdAsync(int id)
         {
-            var a = await _appointmentRepository.GetByIdAsync(id);
+            var a = await _appointmentRepository.GetByIdQueryable(id)
+                .Include(a => a.Patient)
+                .Include(a => a.Doctor).ThenInclude(d => d.User)
+                .Include(a => a.Therapy)
+                .Include(a => a.Receptionist)
+                .FirstOrDefaultAsync();
+
             if (a == null)
                 throw new KeyNotFoundException($"Appointment with ID {id} not found");
 
@@ -52,9 +58,13 @@ namespace Special_kids_therapy_center.Services.Implementation
             {
                 AppointmentId = a.AppointmentId,
                 PatientId = a.PatientId,
+                PatientName = a.Patient != null ? $"{a.Patient.FirstName} {a.Patient.LastName}" : null,
                 DoctorId = a.DoctorId,
+                DoctorName = a.Doctor != null ? $"{a.Doctor.User.FirstName} {a.Doctor.User.LastName}" : null,
                 TherapyId = a.TherapyId,
+                TherapyName = a.Therapy != null ? a.Therapy.Name : null,
                 ReceptionistId = a.ReceptionistId,
+                ReceptionistName = a.Receptionist != null ? $"{a.Receptionist.FirstName} {a.Receptionist.LastName}" : null,
                 AppointmentDate = a.AppointmentDate,
                 StartTime = a.StartTime,
                 EndTime = a.EndTime,
@@ -71,7 +81,8 @@ namespace Special_kids_therapy_center.Services.Implementation
                 PatientId = dto.PatientId,
                 DoctorId = dto.DoctorId,
                 TherapyId = dto.TherapyId,
-                ReceptionistId = dto.ReceptionistId,
+                ReceptionistId = dto.ReceptionistId ?? 0,
+                SlotId = dto.SlotId,
                 AppointmentDate = dto.AppointmentDate,
                 StartTime = dto.StartTime,
                 EndTime = dto.EndTime,
@@ -82,13 +93,19 @@ namespace Special_kids_therapy_center.Services.Implementation
 
             var created = await _appointmentRepository.CreateAsync(appointment);
 
+            // If a slot was provided, mark it booked
+            if (dto.SlotId != null)
+            {
+                await _appointmentRepository.MarkSlotBookedAsync(dto.SlotId.Value);
+            }
+
             return new AppointmentResponseDto
             {
                 AppointmentId = created.AppointmentId,
                 PatientId = created.PatientId,
                 DoctorId = created.DoctorId,
                 TherapyId = created.TherapyId,
-                ReceptionistId = created.ReceptionistId,
+                ReceptionistId = created.ReceptionistId == 0 ? (int?)null : created.ReceptionistId,
                 AppointmentDate = created.AppointmentDate,
                 StartTime = created.StartTime,
                 EndTime = created.EndTime,
@@ -118,7 +135,7 @@ namespace Special_kids_therapy_center.Services.Implementation
                 PatientId = updated.PatientId,
                 DoctorId = updated.DoctorId,
                 TherapyId = updated.TherapyId,
-                ReceptionistId = updated.ReceptionistId,
+                ReceptionistId = updated.ReceptionistId == 0 ? (int?)null : updated.ReceptionistId,
                 AppointmentDate = updated.AppointmentDate,
                 StartTime = updated.StartTime,
                 EndTime = updated.EndTime,

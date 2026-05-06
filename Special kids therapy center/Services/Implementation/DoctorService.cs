@@ -35,7 +35,10 @@ namespace Special_kids_therapy_center.Services.Implementation
 
         public async Task<DoctorResponseDto?> GetByIdAsync(int id)
         {
-            var doctor = await _doctorRepository.GetByIdAsync(id);
+            var doctor = await _doctorRepository.GetByIdQueryable(id)
+                .Include(d => d.User)
+                .FirstOrDefaultAsync();
+
             if (doctor == null)
                 throw new KeyNotFoundException($"Doctor with ID {id} not found");
 
@@ -43,6 +46,31 @@ namespace Special_kids_therapy_center.Services.Implementation
             {
                 DoctorId = doctor.DoctorId,
                 UserId = doctor.UserId,
+                FullName = $"{doctor.User.FirstName} {doctor.User.LastName}",
+                Email = doctor.User.Email,
+                Specialization = doctor.Specialization,
+                Bio = doctor.Bio,
+                AvailableDays = doctor.AvailableDays,
+                StartTime = doctor.StartTime,
+                EndTime = doctor.EndTime
+            };
+        }
+
+        public async Task<DoctorResponseDto?> GetByUserIdAsync(int userId)
+        {
+            var doctor = await _doctorRepository.GetAllAsync()
+                .Include(d => d.User)
+                .FirstOrDefaultAsync(d => d.UserId == userId);
+
+            if (doctor == null)
+                throw new KeyNotFoundException($"No doctor profile found for user {userId}");
+
+            return new DoctorResponseDto
+            {
+                DoctorId = doctor.DoctorId,
+                UserId = doctor.UserId,
+                FullName = $"{doctor.User.FirstName} {doctor.User.LastName}",
+                Email = doctor.User.Email,
                 Specialization = doctor.Specialization,
                 Bio = doctor.Bio,
                 AvailableDays = doctor.AvailableDays,

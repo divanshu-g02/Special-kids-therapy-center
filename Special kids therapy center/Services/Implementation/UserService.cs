@@ -1,6 +1,5 @@
 ﻿using Special_kids_therapy_center.DTOs.User;
 using Special_kids_therapy_center.Models;
-using Special_kids_therapy_center.Repository.Implementation;
 using Special_kids_therapy_center.Repository.Interface;
 using Special_kids_therapy_center.Services.Interface;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +8,6 @@ namespace Special_kids_therapy_center.Services.Implementation
 {
     public class UserService : IUserService
     {
-
         private readonly IUserRepository _repo;
 
         public UserService(IUserRepository repo)
@@ -19,18 +17,18 @@ namespace Special_kids_therapy_center.Services.Implementation
 
         public async Task<List<UserResponseDto>> GetAllAsync()
         {
-            return await _repo.GetAllAsync()
-                .Select(u => new UserResponseDto
-                {
-                    UserId = u.UserId,
-                    FirstName = u.FirstName,
-                    LastName = u.LastName,
-                    Email = u.Email,
-                    Role = u.Role,
-                    PhoneNo = u.PhoneNo,
-                    CreatedAt = u.CreatedAt,
-                    IsActive = u.IsActive
-                }).ToListAsync();
+            var users = await _repo.GetAllAsync().ToListAsync();
+            return users.Select(u => new UserResponseDto
+            {
+                UserId = u.UserId,
+                FirstName = u.FirstName,
+                LastName = u.LastName,
+                Email = u.Email,
+                Role = u.Role.ToString(),
+                PhoneNo = u.PhoneNo,
+                CreatedAt = u.CreatedAt,
+                IsActive = u.IsActive
+            }).ToList();
         }
 
         public async Task<UserResponseDto?> GetByIdAsync(int id)
@@ -45,7 +43,7 @@ namespace Special_kids_therapy_center.Services.Implementation
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
-                Role = user.Role,
+                Role = user.Role.ToString(),
                 PhoneNo = user.PhoneNo,
                 CreatedAt = user.CreatedAt,
                 IsActive = user.IsActive
@@ -74,7 +72,7 @@ namespace Special_kids_therapy_center.Services.Implementation
                 FirstName = created.FirstName,
                 LastName = created.LastName,
                 Email = created.Email,
-                Role = created.Role,
+                Role = created.Role.ToString(),
                 PhoneNo = created.PhoneNo,
                 CreatedAt = created.CreatedAt,
                 IsActive = created.IsActive
@@ -100,7 +98,7 @@ namespace Special_kids_therapy_center.Services.Implementation
                 FirstName = updated.FirstName,
                 LastName = updated.LastName,
                 Email = updated.Email,
-                Role = updated.Role,
+                Role = updated.Role.ToString(),
                 PhoneNo = updated.PhoneNo,
                 CreatedAt = updated.CreatedAt,
                 IsActive = updated.IsActive

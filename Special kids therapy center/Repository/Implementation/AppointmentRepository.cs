@@ -25,6 +25,21 @@ namespace Special_kids_therapy_center.Repository.Implementation
                 .FirstOrDefaultAsync(a => a.AppointmentId == id);
         }
 
+        public IQueryable<Appointment> GetByIdQueryable(int id)
+        {
+            return _context.Appointments.Where(a => a.AppointmentId == id);
+        }
+
+        public async Task MarkSlotBookedAsync(int slotId)
+        {
+            var slot = await _context.Slots.FindAsync(slotId);
+            if (slot != null)
+            {
+                slot.IsBooked = true;
+                await _context.SaveChangesAsync();
+            }
+        }
+
         public async Task<Appointment> CreateAsync(Appointment appointment)
         {
             await _context.Appointments.AddAsync(appointment);

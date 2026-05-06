@@ -4,8 +4,8 @@
     {
         public int FindingId { get; set; }
         public int AppointmentId { get; set; }
-        public string PatientName { get; set; }   
-        public string DoctorName { get; set; }  
+        public string? PatientName { get; set; }   
+        public string? DoctorName { get; set; }  
         public string? Observations { get; set; }
         public string? Recommendations { get; set; }
         public DateOnly? NextSessionDate { get; set; }
