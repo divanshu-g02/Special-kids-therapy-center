@@ -46,7 +46,7 @@ namespace Special_kids_therapy_center.Middleware
                     break;
 
                 case InvalidOperationException:
-                    statusCode = HttpStatusCode.Conflict;   
+                    statusCode = HttpStatusCode.Conflict;
                     break;
             }
 
@@ -55,6 +55,13 @@ namespace Special_kids_therapy_center.Middleware
                 success = false,
                 message = ex.Message
             };
+
+            
+            var origin = context.Request.Headers["Origin"].ToString();
+            if (!string.IsNullOrEmpty(origin))
+            {
+                context.Response.Headers["Access-Control-Allow-Origin"] = origin;
+            }
 
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)statusCode;

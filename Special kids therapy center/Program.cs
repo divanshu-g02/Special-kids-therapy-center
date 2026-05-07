@@ -48,7 +48,8 @@ namespace Special_kids_therapy_center
                             "https://localhost:3000"
                         )
                         .AllowAnyHeader()
-                        .AllowAnyMethod();
+                        .AllowAnyMethod()
+                        .AllowCredentials();
                     });
             });
 
@@ -110,16 +111,25 @@ namespace Special_kids_therapy_center
 
             var app = builder.Build();
 
-            // ─── Middleware Pipeline
+            app.UseCors("AllowReact");
+
+            app.Use(async (context, next) =>
+            {
+                if (context.Request.Method == "OPTIONS")
+                {
+                    context.Response.StatusCode = 200;
+                    await context.Response.CompleteAsync();
+                    return;
+                }
+                await next();
+            });
+
             app.UseMiddleware<ExceptionMiddleware>();
 
-            // Force disable HTTPS redirection in development
             if (!app.Environment.IsDevelopment())
             {
                 app.UseHttpsRedirection();
             }
-
-            app.UseCors("AllowReact");
 
             app.UseAuthentication();
             app.UseAuthorization();

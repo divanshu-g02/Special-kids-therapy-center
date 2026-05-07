@@ -104,5 +104,24 @@ namespace Special_kids_therapy_center.Services.Implementation
 
             return await _slotRepository.DeleteAsync(id);
         }
+
+        public async Task<List<SlotResponseDto>> GetAvailableSlotsAsync()
+        {
+            return await _slotRepository.GetAllAsync()
+                .Include(s => s.Doctor)
+                .ThenInclude(d => d.User)
+                .Where(s => !s.IsBooked)
+                .Select(s => new SlotResponseDto
+                {
+                    SlotId = s.SlotId,
+                    DoctorId = s.DoctorId,
+                    DoctorName = $"{s.Doctor.User.FirstName} {s.Doctor.User.LastName}",
+                    Date = s.Date,
+                    StartTime = s.StartTime,
+                    EndTime = s.EndTime,
+                    IsBooked = s.IsBooked
+                })
+                .ToListAsync();
+        }
     }
 }

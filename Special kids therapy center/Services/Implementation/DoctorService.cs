@@ -17,20 +17,24 @@ namespace Special_kids_therapy_center.Services.Implementation
 
         public async Task<List<DoctorResponseDto>> GetAllAsync()
         {
-            return await _doctorRepository.GetAllAsync()
+            var doctors = await _doctorRepository.GetAllAsync()
                 .Include(d => d.User)
-                .Select(d => new DoctorResponseDto
-                {
-                    DoctorId = d.DoctorId,
-                    UserId = d.UserId,
-                    FullName = $"{d.User.FirstName} {d.User.LastName}",
-                    Email = d.User.Email,
-                    Specialization = d.Specialization,
-                    Bio = d.Bio,
-                    AvailableDays = d.AvailableDays,
-                    StartTime = d.StartTime,
-                    EndTime = d.EndTime
-                }).ToListAsync();
+                .ToListAsync();
+
+            return doctors.Select(d => new DoctorResponseDto
+            {
+                DoctorId = d.DoctorId,
+                UserId = d.UserId,
+                FullName = d.User != null
+                    ? $"{d.User.FirstName} {d.User.LastName}"
+                    : string.Empty,
+                Email = d.User?.Email ?? string.Empty,
+                Specialization = d.Specialization,
+                Bio = d.Bio,
+                AvailableDays = d.AvailableDays,
+                StartTime = d.StartTime,
+                EndTime = d.EndTime
+            }).ToList();
         }
 
         public async Task<DoctorResponseDto?> GetByIdAsync(int id)
@@ -40,14 +44,16 @@ namespace Special_kids_therapy_center.Services.Implementation
                 .FirstOrDefaultAsync();
 
             if (doctor == null)
-                throw new KeyNotFoundException($"Doctor with ID {id} not found");
+                return null;
 
             return new DoctorResponseDto
             {
                 DoctorId = doctor.DoctorId,
                 UserId = doctor.UserId,
-                FullName = $"{doctor.User.FirstName} {doctor.User.LastName}",
-                Email = doctor.User.Email,
+                FullName = doctor.User != null
+                    ? $"{doctor.User.FirstName} {doctor.User.LastName}"
+                    : string.Empty,
+                Email = doctor.User?.Email ?? string.Empty,
                 Specialization = doctor.Specialization,
                 Bio = doctor.Bio,
                 AvailableDays = doctor.AvailableDays,
@@ -63,14 +69,16 @@ namespace Special_kids_therapy_center.Services.Implementation
                 .FirstOrDefaultAsync(d => d.UserId == userId);
 
             if (doctor == null)
-                throw new KeyNotFoundException($"No doctor profile found for user {userId}");
+                return null;
 
             return new DoctorResponseDto
             {
                 DoctorId = doctor.DoctorId,
                 UserId = doctor.UserId,
-                FullName = $"{doctor.User.FirstName} {doctor.User.LastName}",
-                Email = doctor.User.Email,
+                FullName = doctor.User != null
+                    ? $"{doctor.User.FirstName} {doctor.User.LastName}"
+                    : string.Empty,
+                Email = doctor.User?.Email ?? string.Empty,
                 Specialization = doctor.Specialization,
                 Bio = doctor.Bio,
                 AvailableDays = doctor.AvailableDays,
@@ -105,17 +113,27 @@ namespace Special_kids_therapy_center.Services.Implementation
             };
         }
 
-        public async Task<DoctorResponseDto> UpdateAsync(int id, DoctorUpdateDto dto)
+        public async Task<DoctorResponseDto?> UpdateAsync(int id, DoctorUpdateDto dto)
         {
             var doctor = await _doctorRepository.GetByIdAsync(id);
-            if (doctor == null)
-                throw new KeyNotFoundException($"Doctor with ID {id} not found");
 
-            if (dto.Specialization != null) doctor.Specialization = dto.Specialization;
-            if (dto.Bio != null) doctor.Bio = dto.Bio;
-            if (dto.AvailableDays != null) doctor.AvailableDays = dto.AvailableDays;
-            if (dto.StartTime != null) doctor.StartTime = dto.StartTime;
-            if (dto.EndTime != null) doctor.EndTime = dto.EndTime;
+            if (doctor == null)
+                return null;
+
+            if (!string.IsNullOrWhiteSpace(dto.Specialization))
+                doctor.Specialization = dto.Specialization;
+
+            if (!string.IsNullOrWhiteSpace(dto.Bio))
+                doctor.Bio = dto.Bio;
+
+            if (!string.IsNullOrWhiteSpace(dto.AvailableDays))
+                doctor.AvailableDays = dto.AvailableDays;
+
+            if (dto.StartTime != null)
+                doctor.StartTime = dto.StartTime;
+
+            if (dto.EndTime != null)
+                doctor.EndTime = dto.EndTime;
 
             var updated = await _doctorRepository.UpdateAsync(doctor);
 
@@ -134,8 +152,9 @@ namespace Special_kids_therapy_center.Services.Implementation
         public async Task<bool> DeleteAsync(int id)
         {
             var doctor = await _doctorRepository.GetByIdAsync(id);
+
             if (doctor == null)
-                throw new KeyNotFoundException($"Doctor with ID {id} not found");
+                return false;
 
             return await _doctorRepository.DeleteAsync(id);
         }

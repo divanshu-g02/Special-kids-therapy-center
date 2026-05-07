@@ -20,7 +20,7 @@ namespace Special_kids_therapy_center.Controllers
 
         // GET api/user
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Receptionist")]
         public async Task<IActionResult> GetAll()
         {
             var result = await _userService.GetAllAsync();
@@ -29,7 +29,7 @@ namespace Special_kids_therapy_center.Controllers
 
         // GET api/user/5
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Receptionist")]
         public async Task<IActionResult> GetById(int id)
         {
             var result = await _userService.GetByIdAsync(id);

@@ -35,7 +35,14 @@ namespace Special_kids_therapy_center.Services.Implementation
 
         public async Task<DoctorFindingResponseDto?> GetByIdAsync(int id)
         {
-            var df = await _doctorFindingRepository.GetByIdAsync(id);
+            var df = await _doctorFindingRepository.GetAllAsync()
+                .Include(df => df.Appointment)
+                    .ThenInclude(a => a.Patient)
+                .Include(df => df.Appointment)
+                    .ThenInclude(a => a.Doctor)
+                        .ThenInclude(d => d.User)
+                .FirstOrDefaultAsync(df => df.FindingId == id);
+
             if (df == null)
                 throw new KeyNotFoundException($"Finding with ID {id} not found");
 
@@ -43,6 +50,8 @@ namespace Special_kids_therapy_center.Services.Implementation
             {
                 FindingId = df.FindingId,
                 AppointmentId = df.AppointmentId,
+                PatientName = $"{df.Appointment.Patient.FirstName} {df.Appointment.Patient.LastName}",
+                DoctorName = $"{df.Appointment.Doctor.User.FirstName} {df.Appointment.Doctor.User.LastName}",
                 Observations = df.Observations,
                 Recommendations = df.Recommendations,
                 NextSessionDate = df.NextSessionDate,

@@ -3,6 +3,7 @@ using Special_kids_therapy_center.DTOs.Appointment;
 using Special_kids_therapy_center.Models;
 using Special_kids_therapy_center.Repository.Interface;
 using Special_kids_therapy_center.Services.Interface;
+using System.Security.Claims;
 
 namespace Special_kids_therapy_center.Services.Implementation
 {
@@ -15,31 +16,52 @@ namespace Special_kids_therapy_center.Services.Implementation
             _appointmentRepository = appointmentRepository;
         }
 
-        public async Task<List<AppointmentResponseDto>> GetAllAsync()
+        // 🔥 FIX: support optional patient filtering (important for frontend security later)
+        public async Task<List<AppointmentResponseDto>> GetAllAsync(int? patientId = null)
         {
-            return await _appointmentRepository.GetAllAsync()
+            var query = _appointmentRepository.GetAllAsync()
                 .Include(a => a.Patient)
                 .Include(a => a.Doctor).ThenInclude(d => d.User)
                 .Include(a => a.Therapy)
                 .Include(a => a.Receptionist)
+                .AsQueryable();
+
+            // 🔐 IMPORTANT: filter if patientId provided
+            if (patientId != null)
+            {
+                query = query.Where(a => a.PatientId == patientId);
+            }
+
+            return await query
                 .Select(a => new AppointmentResponseDto
                 {
                     AppointmentId = a.AppointmentId,
                     PatientId = a.PatientId,
-                    PatientName = $"{a.Patient.FirstName} {a.Patient.LastName}",
+                    PatientName = a.Patient != null
+                        ? $"{a.Patient.FirstName} {a.Patient.LastName}"
+                        : null,
+
                     DoctorId = a.DoctorId,
-                    DoctorName = $"{a.Doctor.User.FirstName} {a.Doctor.User.LastName}",
+                    DoctorName = a.Doctor != null
+                        ? $"{a.Doctor.User.FirstName} {a.Doctor.User.LastName}"
+                        : null,
+
                     TherapyId = a.TherapyId,
-                    TherapyName = a.Therapy.Name,
+                    TherapyName = a.Therapy != null ? a.Therapy.Name : null,
+
                     ReceptionistId = a.ReceptionistId,
-                    ReceptionistName = $"{a.Receptionist.FirstName} {a.Receptionist.LastName}",
+                    ReceptionistName = a.Receptionist != null
+                        ? $"{a.Receptionist.FirstName} {a.Receptionist.LastName}"
+                        : null,
+
                     AppointmentDate = a.AppointmentDate,
                     StartTime = a.StartTime,
                     EndTime = a.EndTime,
                     Status = a.Status,
                     Notes = a.Notes,
                     CreatedAt = a.CreatedAt
-                }).ToListAsync();
+                })
+                .ToListAsync();
         }
 
         public async Task<AppointmentResponseDto?> GetByIdAsync(int id)
@@ -76,12 +98,29 @@ namespace Special_kids_therapy_center.Services.Implementation
 
         public async Task<AppointmentResponseDto> CreateAsync(AppointmentCreateDto dto)
         {
+            if (dto.EndTime <= dto.StartTime)
+                throw new ArgumentException("End time must be after start time");
+
+            var existingAppointments = await _appointmentRepository.GetAllAsync()
+                .Where(a =>
+                    a.DoctorId == dto.DoctorId &&
+                    a.AppointmentDate == dto.AppointmentDate &&
+                    a.Status != Status.Cancelled &&
+                    (
+                        dto.StartTime < a.EndTime &&
+                        dto.EndTime > a.StartTime
+                    ))
+                .ToListAsync();
+
+            if (existingAppointments.Any())
+                throw new InvalidOperationException("Doctor already has an appointment in this time range");
+
             var appointment = new Appointment
             {
                 PatientId = dto.PatientId,
                 DoctorId = dto.DoctorId,
                 TherapyId = dto.TherapyId,
-                ReceptionistId = dto.ReceptionistId ?? 0,
+                ReceptionistId = dto.ReceptionistId,
                 SlotId = dto.SlotId,
                 AppointmentDate = dto.AppointmentDate,
                 StartTime = dto.StartTime,
@@ -93,8 +132,7 @@ namespace Special_kids_therapy_center.Services.Implementation
 
             var created = await _appointmentRepository.CreateAsync(appointment);
 
-            // If a slot was provided, mark it booked
-            if (dto.SlotId != null)
+            if (dto.SlotId.HasValue)
             {
                 await _appointmentRepository.MarkSlotBookedAsync(dto.SlotId.Value);
             }
@@ -105,7 +143,7 @@ namespace Special_kids_therapy_center.Services.Implementation
                 PatientId = created.PatientId,
                 DoctorId = created.DoctorId,
                 TherapyId = created.TherapyId,
-                ReceptionistId = created.ReceptionistId == 0 ? (int?)null : created.ReceptionistId,
+                ReceptionistId = created.ReceptionistId,
                 AppointmentDate = created.AppointmentDate,
                 StartTime = created.StartTime,
                 EndTime = created.EndTime,
@@ -121,11 +159,20 @@ namespace Special_kids_therapy_center.Services.Implementation
             if (appointment == null)
                 throw new KeyNotFoundException($"Appointment with ID {id} not found");
 
-            if (dto.AppointmentDate != null) appointment.AppointmentDate = dto.AppointmentDate.Value;
-            if (dto.StartTime != null) appointment.StartTime = dto.StartTime.Value;
-            if (dto.EndTime != null) appointment.EndTime = dto.EndTime.Value;
-            if (dto.Status != null) appointment.Status = dto.Status.Value;
-            if (dto.Notes != null) appointment.Notes = dto.Notes;
+            if (dto.AppointmentDate.HasValue)
+                appointment.AppointmentDate = dto.AppointmentDate.Value;
+
+            if (dto.StartTime.HasValue)
+                appointment.StartTime = dto.StartTime.Value;
+
+            if (dto.EndTime.HasValue)
+                appointment.EndTime = dto.EndTime.Value;
+
+            if (dto.Status.HasValue)
+                appointment.Status = dto.Status.Value;
+
+            if (!string.IsNullOrEmpty(dto.Notes))
+                appointment.Notes = dto.Notes;
 
             var updated = await _appointmentRepository.UpdateAsync(appointment);
 
@@ -135,7 +182,7 @@ namespace Special_kids_therapy_center.Services.Implementation
                 PatientId = updated.PatientId,
                 DoctorId = updated.DoctorId,
                 TherapyId = updated.TherapyId,
-                ReceptionistId = updated.ReceptionistId == 0 ? (int?)null : updated.ReceptionistId,
+                ReceptionistId = updated.ReceptionistId,
                 AppointmentDate = updated.AppointmentDate,
                 StartTime = updated.StartTime,
                 EndTime = updated.EndTime,

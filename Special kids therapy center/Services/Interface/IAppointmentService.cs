@@ -4,10 +4,14 @@ namespace Special_kids_therapy_center.Services.Interface
 {
     public interface IAppointmentService
     {
-        Task<List<AppointmentResponseDto>> GetAllAsync();
+        Task<List<AppointmentResponseDto>> GetAllAsync(int? patientId = null);
+
         Task<AppointmentResponseDto?> GetByIdAsync(int id);
+
         Task<AppointmentResponseDto> CreateAsync(AppointmentCreateDto dto);
+
         Task<AppointmentResponseDto> UpdateAsync(int id, AppointmentUpdateDto dto);
+
         Task<bool> DeleteAsync(int id);
     }
 }

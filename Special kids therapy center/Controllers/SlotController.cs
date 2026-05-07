@@ -61,5 +61,13 @@ namespace Special_kids_therapy_center.Controllers
             var result = await _slotService.DeleteAsync(id);
             return Ok(result);
         }
+
+        [HttpGet("available")]
+        [Authorize(Roles = "Admin,Doctor,Receptionist,Patient,Guardian")]
+        public async Task<IActionResult> GetAvailable()
+        {
+            var result = await _slotService.GetAvailableSlotsAsync();
+            return Ok(result);
+        }
     }
 }

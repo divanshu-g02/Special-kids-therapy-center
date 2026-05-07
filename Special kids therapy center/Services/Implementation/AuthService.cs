@@ -44,6 +44,7 @@ namespace Special_kids_therapy_center.Services.Implementation
         public async Task<AuthResponseDto> RegisterAsync(RegisterDto dto)
         {
             var exists = await _authRepository.EmailExistsAsync(dto.Email);
+
             if (exists)
                 throw new InvalidOperationException("Email already registered");
 
@@ -53,7 +54,7 @@ namespace Special_kids_therapy_center.Services.Implementation
                 LastName = dto.LastName,
                 Email = dto.Email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
-                Role = dto.Role,
+                Role = Roles.Guardian,
                 PhoneNo = dto.PhoneNo,
                 CreatedAt = DateTime.Now,
                 IsActive = true
@@ -65,6 +66,7 @@ namespace Special_kids_therapy_center.Services.Implementation
 
             return new AuthResponseDto
             {
+                UserId = user.UserId,
                 Email = user.Email,
                 FullName = $"{user.FirstName} {user.LastName}",
                 Role = user.Role.ToString(),
